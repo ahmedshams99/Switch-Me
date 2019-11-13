@@ -24,44 +24,32 @@ const UserSchema = new Schema({
     major: {
         type: String,
         enum: [
-          "Media Engineering and Technology",
+          "Computer Science and Engineering",
+          "Digital Media Engineering and Technology",
           "Information Engineering and Technology",
-          "Engineering and Materials Science",
-          "Pharmacy and Biotechnology",
-          "Management Technology",
-          "Applied Sciences and Arts",
+          "Networks",
+          "Communications",
+          "Electronics",
+          "Materials Engineering",
+          "Design and Production Engineering",
+          "Mechatronics Engineering",
+          "Civil Engineering",
+          "Architecture Engineering",
+          "Pharmacy & Biotechnology",
+          "Biotechnology",
+          "General Management",
+          "Business Informatics",
+          "Technology-based Management",
+          "Graphic Design",
+          "Media Design",
+          "Product Design",
           "Faculty of Law and Legal Studies"
         ],
-        default: "Media Engineering and Technology",
+        default: "Computer Science and Engineering",
         required: true
       },
     tutorialNumber: {
         type: Number,
-        required: true
-    },
-    germanLevel: {
-        type: String,
-        enum: [
-          "German Language I",
-          "German Language II",
-          "German Language III",
-          "German Language IV",
-          "None"
-        ],
-        default: "None",
-        required: true
-    },
-    englishLevel: {
-        type: String,
-        enum: [
-          "Academic English",
-          "Academic Study Skills",
-          "Critical Thinking & Scientific Methodology",
-          "Communication & Presentation Skills",
-          "Research Paper Writing",
-          "None"
-        ],
-        default: "None",
         required: true
     },
     mobileNumber: {
@@ -74,3 +62,29 @@ const UserSchema = new Schema({
     }
     });
     module.exports = User = mongoose.model("User", UserSchema);
+
+    // germanLevel: {
+    //     type: String,
+    //     enum: [
+    //       "German Language I",
+    //       "German Language II",
+    //       "German Language III",
+    //       "German Language IV",
+    //       "None"
+    //     ],
+    //     default: "None",
+    //     required: true
+    // },
+    // englishLevel: {
+    //     type: String,
+    //     enum: [
+    //       "Academic English",
+    //       "Academic Study Skills",
+    //       "Critical Thinking & Scientific Methodology",
+    //       "Communication & Presentation Skills",
+    //       "Research Paper Writing",
+    //       "None"
+    //     ],
+    //     default: "None",
+    //     required: true
+    // },

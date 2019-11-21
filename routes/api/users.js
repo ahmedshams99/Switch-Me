@@ -3,5 +3,19 @@ const router = express.Router();
 const userController = require("../../controllers/users");
 
 //Read
-router.get('/',userController.getUser);
+router.get('/:id',userController.getUser);
+
+router.get('/',userController.getAllUsers);
+
+//Create
+router.post('/',userController.createUser);
+router.post('/createPost/:id',userController.createPost);
+
+//Update
+router.put('/:id',userController.updateUser);
+
+router.put('/preCreatePost/:id',userController.preCreatePost);
+router.put('/doubleSwitch/:id',userController.doubleSwitch);
+//Delete
+router.delete('/deletePost/:userid/:postid',userController.deletePost);
 module.exports = router;

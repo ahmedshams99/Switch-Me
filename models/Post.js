@@ -13,7 +13,7 @@ const PostSchema = new Schema({
     openForDoubleSwitch: {
         type: Boolean,
         default: false,
-        required: false
+        required: true
     },
     requestors: {
         type: [Schema.Types.ObjectId],

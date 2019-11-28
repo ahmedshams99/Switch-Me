@@ -3,7 +3,7 @@
     box-sizing: border-box;
     &:active, &:focus{
     	border: 0;
-    	outline: 0;
+		outline: 0;
     }
 }
 
@@ -140,4 +140,12 @@ div.arrow {
 		transform: scale(0.8);
 	}
 	
+}
+.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+    opacity: 1;
 }

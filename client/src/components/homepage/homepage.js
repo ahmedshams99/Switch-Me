@@ -65,9 +65,9 @@ export default class HomePage extends Component {
 		this.RandomBackground();
 		if(localStorage.getItem("loggedIn"))
 			this.setState({ lang: localStorage.getItem("lang") });
-		let posts=await axios.get(`http://localhost:5000/api/users/getAllPosts`);
+		let posts=await axios.get(`/api/users/getAllPosts`);
 		await posts.data.map(async (val,index)=>{
-			const user= await axios.get(`http://localhost:5000/api/users/${val.user}`);
+			const user= await axios.get(`/api/users/${val.user}`);
 			posts.data[index].fromTutorial=user.data.tutorialNumber;
 		})
 		await this.setState({posts: posts.data});

@@ -8,8 +8,8 @@ router.get('/:id',userController.getUser);
 router.get('/',userController.getAllUsers);
 
 //Create
-router.post('/',userController.createUser);
 router.post('/createPost/:id',userController.createPost);
+router.post('/',userController.createUser);
 
 //Update
 router.put('/:id',userController.updateUser);

@@ -31,21 +31,20 @@ exports.updateUser = async function(req, res) {
         return res.send({err:"Invalid User Id"});
     const user = await User.findById(req.params.id);
     if(!user)  return res.send({err:"User doesn't exist"});
-    const isValidatedUser=userValidator.validationSchema(req.body);
+    if(!req.body.email)          req.body.email=user.email;
+    if(!req.body.fullName)       req.body.fullName=user.fullName;
+    if(!req.body.dash)           req.body.dash=user.dash;
+    if(!req.body.ID)             req.body.ID=user.ID;
+    if(!req.body.major)          req.body.major=user.major;
+    if(!req.body.tutorialNumber) req.body.tutorialNumber=user.tutorialNumber;
+    if(!req.body.germanLevel)    req.body.germanLevel=user.germanLevel;
+    if(!req.body.englishLevel)   req.body.englishLevel=user.englishLevel;
+    const isValidatedUser=userValidator.updateSchema(req.body);
     if(isValidatedUser.error)
         return res.send({error: isValidatedUser.error});
-    // if(req.body.email)          user.email=req.body.email;
-    // if(req.body.fullName)       user.fullName=req.body.fullName;
-    // if(req.body.dash)           user.dash=req.body.dash;
-    // if(req.body.ID)             user.ID=req.body.ID;
-    // if(req.body.major)          user.major=req.body.major;
-    // if(req.body.tutorialNumber) user.tutorialNumber=req.body.tutorialNumber;
-    // if(req.body.mobileNumber)   user.mobileNumber=req.body.mobileNumber;
-    // if(req.body.facebookAccount)user.facebookAccount=req.body.facebookAccount;
-    // if(req.body.germanLevel)    user.germanLevel=req.body.germanLevel;
-    // if(req.body.englishLevel)   user.englishLevel=req.body.englishLevel;
-    await User.findByIdAndUpdate(req.params.ID,  req.body);
-    return res.send(user)
+    await User.findByIdAndUpdate(req.params.id,  req.body);
+    const newUser=await User.findById(req.params.id);
+    return res.send(newUser)
 }
 
 exports.preCreatePost = async function(req, res)

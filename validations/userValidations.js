@@ -51,4 +51,53 @@ module.exports = {
       };
       return Joi.validate(request, validationSchema);
     }
+    ,updateSchema: request => {
+      const validationSchema = {
+        email: Joi.string().email(),
+        fullName: Joi.string().min(1).max(500),
+        dash: Joi.number().positive(),
+        ID: Joi.number().positive(),
+        major: Joi.string().valid([
+          "Computer Science and Engineering",
+          "Digital Media Engineering and Technology",
+          "Information Engineering and Technology",
+          "Networks",
+          "Communications",
+          "Electronics",
+          "Materials Engineering",
+          "Design and Production Engineering",
+          "Mechatronics Engineering",
+          "Civil Engineering",
+          "Architecture Engineering",
+          "Pharmacy & Biotechnology",
+          "Biotechnology",
+          "General Management",
+          "Business Informatics",
+          "Technology-based Management",
+          "Graphic Design",
+          "Media Design",
+          "Product Design",
+          "Faculty of Law and Legal Studies"
+        ]),
+        tutorialNumber: Joi.number().positive(),
+        mobileNumber: Joi.string().max(13).min(11).allow(''),
+        facebookAccount: Joi.string().allow(''),
+        germanLevel: Joi.string().valid([
+          "German Language I",
+          "German Language II",
+          "German Language III",
+          "German Language IV",
+          "None"
+        ]),
+        englishLevel: Joi.string().valid([
+          "Academic English",
+          "Academic Study Skills",
+          "Critical Thinking & Scientific Methodology",
+          "Communication & Presentation Skills",
+          "Research Paper Writing",
+          "None"
+        ]),
+    };
+    return Joi.validate(request, validationSchema);
+  }
 };

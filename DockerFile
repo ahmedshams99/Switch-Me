@@ -23,7 +23,7 @@ Run npm i react-dom
 Run npm i react-modal
 Run npm i react-router-dom
 Run npm i react-scripts
-
+Run npm i @material-ui/icons
 COPY . .
 
 EXPOSE 3000

@@ -1,5 +1,6 @@
 import React from "react";
 import "./cards.scss"
+import axios from 'axios'
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -23,7 +24,10 @@ class Card extends React.Component {
 			vx: 0.0,
 			vy: 0.0,
 			mass: 0.7,
-			damping: 0.8
+			damping: 0.8,
+			fromTutorial:null,
+			goToTutorials:null,
+			openForDoubleSwitch:null
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -35,8 +39,14 @@ class Card extends React.Component {
 		this.handleTouchMove = this.handleTouchMove.bind(this);
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.animate();
+		const user= await axios.get(`/api/users/${this.props.data.user}`);
+		await this.setState({
+			fromTutorial:user.data.tutorialNumber,
+			goToTutorials:this.props.data.goToTutorials,
+			openForDoubleSwitch:this.props.data.openForDoubleSwitch
+		});
 	}
 
 	handleDown(e) {
@@ -317,9 +327,9 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
-            <div className="text">From: {this.props.data.fromTutorial}</div>
-            <div className="text">To: {this.props.data.goToTutorials}</div>
-            <div className="text">Double Switch: {this.props.data.openForDoubleSwitch? "True":"False"}</div>
+            <div className="text">From: {this.state.fromTutorial}</div>
+            <div className="text">To: {this.state.goToTutorials}</div>
+            <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
 			</div>
 		);
 	}

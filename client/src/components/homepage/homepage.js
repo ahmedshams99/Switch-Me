@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Cards from './cards';
+import { Redirect } from "react-router-dom";
 import './homepage.scss';
 const registerModalStyle = {
 	content : {
@@ -58,7 +59,8 @@ export default class HomePage extends Component {
 			showRegisterModal: false,
 			showLoginModal: false,
 			id:"40",
-			posts:null
+			posts:null,
+			redirectProfile:false
 		};
 	}
 	async componentDidMount(){
@@ -66,11 +68,7 @@ export default class HomePage extends Component {
 		if(localStorage.getItem("loggedIn"))
 			this.setState({ lang: localStorage.getItem("lang") });
 		let posts=await axios.get(`/api/users/getAllPosts`);
-		await posts.data.map(async (val,index)=>{
-			const user= await axios.get(`/api/users/${val.user}`);
-			posts.data[index].fromTutorial=user.data.tutorialNumber;
-		})
-		await this.setState({posts: posts.data});
+		this.setState({posts: posts.data});
 	}
 
     onMouseMove(e) {	
@@ -111,6 +109,7 @@ export default class HomePage extends Component {
 			bold: this.state.colors[RandomID].bold
 		})
 	}
+
 	toggleLoginModal () {
 		this.setState({ showLoginModal: !this.state.showLoginModal });
 	}
@@ -125,12 +124,13 @@ export default class HomePage extends Component {
 		let boldStyle = {
 			color: this.state.bold
 		}
-
+		if(this.state.redirectProfile)
+			return <Redirect to="/profile" />
 		return <div>
 		<section id="app" onMouseMove={this.onMouseMove.bind(this)} style={sectionStyle}>
 				<h1 className="middle" ref="section">
 					<span className="bold" ref="playword" style={boldStyle}>Switch</span>Me<br/>
-					{ 
+					{
 						this.state.id ?  null : <Button variant="outlined" onClick={this.toggleRegisterModal.bind(this)}>Register Now</Button> 
 					}
 					<ReactModal style={registerModalStyle}isOpen={this.state.showRegisterModal} onRequestClose={this.toggleRegisterModal.bind(this)}>
@@ -177,8 +177,12 @@ export default class HomePage extends Component {
 					</ReactModal>
 				</h1>
 					<div id="smallText">Switching has never been this easy.</div>
-					<div className="arrow"/>
-					{this.state.id? null:
+					<div className="arrow" onClick={ () => {
+						var scrollTo=document.getElementById("Cards").getClientRects()[0].y
+						window.scrollBy({top: scrollTo, left: 0, behavior: 'smooth'})
+						}}/>
+					{this.state.id? <div id="login"><Button style={{ color:this.state.text}} onClick={()=>{
+						this.setState({redirectProfile:true})}}>Profile</Button></div>:
 					<div id="login">Already Registered?  <Button style={{ color:this.state.text}} onClick={this.toggleLoginModal.bind(this)}>Login</Button></div>}
 					<ReactModal style={loginModalStyle}isOpen={this.state.showLoginModal} onRequestClose={this.toggleLoginModal.bind(this)}>
 					Login
@@ -187,7 +191,9 @@ export default class HomePage extends Component {
 					<Button style={{textAlign:"center"}}>Login</Button>
 					</ReactModal>
 			</section>
+			<div id="Cards">
 				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts}/>}
+			</div>
 			</div>
 	}
 }

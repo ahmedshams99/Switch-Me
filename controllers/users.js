@@ -73,15 +73,13 @@ checkForOpportunities = async function(tutorialNumber)
     //check if someone made a post that works with me
     var allPosts = await Post.find();
     allPosts = allPosts.filter(post => post.goToTutorials.includes(tutorialNumber));
-    
     if(allPosts.length === 0)
         return [];
     else
     {
         var result = [];
         for(let i = 0;i<allPosts.length;i++){
-            var tempUser = await User.findById(allPosts[i].user);
-            if((tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel))
+            // var tempUser = await User.findById(allPosts[i].user);
                 result.push(allPosts[i]);
         }
         return result;
@@ -122,7 +120,7 @@ exports.createPost = async function(req, res)
     await postController.createPost(req,res);
 }
 exports.deletePost = async function(req, res)
-{
+{6
     if (!mongoValidator.isMongoId(req.params.userid))
         return res.send({ err: "Invalid User Id" });
     if (!mongoValidator.isMongoId(req.params.postid))

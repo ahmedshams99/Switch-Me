@@ -26,6 +26,7 @@
     "node-sass": "^4.13.0",
     "nodemon": "^2.0.1",
     "start": "^5.1.0",
+    "node-fetch": "^2.6.0",
     "validator": "^12.0.0"
   }
 }

@@ -25,6 +25,7 @@ exports.createUser = async function(req, res) {
     const myUser = await User.create(req.body);
     return res.send(myUser);
 }
+
 exports.updateUser = async function(req, res) {
     if (!mongoValidator.isMongoId(req.params.id))
         return res.send({err:"Invalid User Id"});
@@ -71,15 +72,13 @@ checkForOpportunities = async function(tutorialNumber)
     //check if someone made a post that works with me
     var allPosts = await Post.find();
     allPosts = allPosts.filter(post => post.goToTutorials.includes(tutorialNumber));
-    
     if(allPosts.length === 0)
         return [];
     else
     {
         var result = [];
         for(let i = 0;i<allPosts.length;i++){
-            var tempUser = await User.findById(allPosts[i].user);
-            if((tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel))
+            // var tempUser = await User.findById(allPosts[i].user);
                 result.push(allPosts[i]);
         }
         return result;
@@ -90,8 +89,8 @@ exports.doubleSwitch = async function(req,res){
     if(req.body.openForDoubleSwitch)
     {
         let result = [];
-        var left = checkForOpportunities(myUser.tutorialNumber);
-        var right = checkForOpportunities(req.params.goToTutorial);
+        var left = await checkForOpportunities(myUser.tutorialNumber);
+        var right = await checkForOpportunities(req.params.goToTutorial);
         for(let i=0;i<left.length;i++){
             var array1 = left[i].goToTutorials;
             for(let j=0;j<right.length;j++){
@@ -120,7 +119,7 @@ exports.createPost = async function(req, res)
     await postController.createPost(req,res);
 }
 exports.deletePost = async function(req, res)
-{
+{6
     if (!mongoValidator.isMongoId(req.params.userid))
         return res.send({ err: "Invalid User Id" });
     if (!mongoValidator.isMongoId(req.params.postid))
@@ -133,4 +132,4 @@ exports.deletePost = async function(req, res)
     const result= await Post.findByIdAndDelete({_id:req.params.postid})
     if(!result) return res.send({err:"Error deleting this post."})
     return res.send(result);
-}
+}   

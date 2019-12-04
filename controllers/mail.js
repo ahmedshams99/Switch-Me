@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 exports.sendMail(async function(req,res){
 
 
-    const outPut = req.body.message;
+    const outPut =  "<h1> Congrats there is an opportunity to switch with the person with the mail... <h1>"+ req.body.opEmail.toString() ;
 
     // create reusable transporter object using the default SMTP transport
   
@@ -25,7 +25,7 @@ exports.sendMail(async function(req,res){
   
       subject: req.body.subject, // Subject line
   
-      text: "", // plain text body
+      text:"", // plain text body
   
       html: outPut
     };

@@ -31,8 +31,8 @@ module.exports = {
             "Faculty of Law and Legal Studies"
           ]).required(),
           tutorialNumber: Joi.number().positive().required(),
-          mobileNumber: Joi.string().max(13).min(11),
-          facebookAccount: Joi.string(),
+          mobileNumber: Joi.string().max(13).min(11).allow(''),
+          facebookAccount: Joi.string().allow(''),
           germanLevel: Joi.string().valid([
             "German Language I",
             "German Language II",

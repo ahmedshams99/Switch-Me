@@ -1,0 +1,61 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.app {
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+}
+
+.card {
+	width: 25vw;
+	height: 30vw;
+	position: absolute;
+	border-radius: 10px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	transform-origin: center;
+	margin-top: auto;
+	margin-bottom: auto;
+	top: 0;
+	bottom: 0;
+	cursor: -webkit-grab;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-transform: perspective(800px);
+	transform: perspective(800px);
+}
+.color0 {
+	background-color:#2A2C39;
+}
+.color1 {
+	background-color:#FCF751;
+}
+.color2 {
+	background-color:#00BFFF;
+}
+.text {
+	text-align: center;
+	font-family: "Montserrat", sans-serif;
+	font-size: 28px;
+	font-weight: 900;
+	font-style: italic;
+	margin-top: 50px;
+	color: #fff;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.small{
+	font-size: 14px;
+}

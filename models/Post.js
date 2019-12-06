@@ -12,14 +12,12 @@ const PostSchema = new Schema({
     },
     openForDoubleSwitch: {
         type: Boolean,
-        default: false,
-        required: false
+        default: false
     },
     requestors: {
         type: [Schema.Types.ObjectId],
         default: [],
-        ref: "User",
-        required: true
+        ref: "User"
     }
     });
     module.exports = Post = mongoose.model("Post", PostSchema);

@@ -1,0 +1,31 @@
+FROM node:latest
+
+WORKDIR './switch-me'
+
+Run npm i concurrently
+Run npm i body-parser
+Run npm i cloudinary
+Run npm i cors
+Run npm i express
+Run npm i joi
+Run npm i jsonwebtoken
+Run npm i mailer
+Run npm i mongoose
+Run npm i node-sass
+Run npm i nodemon
+Run npm i start
+Run npm i validator
+Run npm i @material-ui/core
+Run npm i axios
+Run npm i node-sass
+Run npm i react
+Run npm i react-dom
+Run npm i react-modal
+Run npm i react-router-dom
+Run npm i react-scripts
+Run npm i @material-ui/icons
+COPY . .
+
+EXPOSE 3000
+EXPOSE 5000
+CMD ["npm","run","dev"]

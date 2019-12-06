@@ -1,7 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser=require("body-parser");
+const cors = require("cors");
 const app = express();
+app.use(cors());
+//Require Route Handlers
+const users = require("./routes/api/users");
+const login = require("./controllers/login");
 
 //Middleware
 app.use(bodyParser.json());
@@ -11,7 +16,7 @@ const db = require("./config/keys").mongoURI;
 
 //Connecting to MongoDB
 mongoose
-  .connect(db)
+  .connect(db,{ useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.log(err));
 
@@ -25,6 +30,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Handling 404
+app.use("/api/users", users);
+app.put("/login", login.login);
 app.use((req, res) => {
   res.status(404).send({ err: "We can not find what you are looking for" });
 });

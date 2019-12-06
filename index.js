@@ -7,7 +7,7 @@ app.use(cors());
 //Require Route Handlers
 const users = require("./routes/api/users");
 const login = require("./controllers/login");
-
+const fileUpload = require('express-fileupload');
 //Middleware
 app.use(bodyParser.json());
 
@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.get("/", (req, res) => res.send("Welcome to Switch Me Backend"));
 }
-
+app.use(fileUpload());
 // Handling 404
 app.use("/api/users", users);
 app.put("/login", login.login);

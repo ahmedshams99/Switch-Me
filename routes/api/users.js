@@ -6,6 +6,7 @@ const populateDB = require("../../controllers/populateDB");
 const mail   = require("../../controllers/mail");
 const cloud = require('../../controllers/cloudinary');
 //Read
+router.get('/preCreatePost/:id',userController.preCreatePost);
 router.get('/getAllPosts',postController.getAllPosts);
 router.get('/:id',userController.getUser);
 

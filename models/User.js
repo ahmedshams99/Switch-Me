@@ -26,7 +26,6 @@ const UserSchema = new Schema({
         enum: [
         "Computer Science and Engineering",
         "Digital Media Engineering and Technology",
-        "Information Engineering and Technology",
         "Networks",
         "Communications",
         "Electronics",

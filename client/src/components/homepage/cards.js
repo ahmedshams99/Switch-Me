@@ -1,6 +1,8 @@
 import React from "react";
 import "./cards.scss"
 import axios from 'axios'
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Fab from '@material-ui/core/Fab';
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -27,7 +29,8 @@ class Card extends React.Component {
 			damping: 0.8,
 			fromTutorial:null,
 			goToTutorials:null,
-			openForDoubleSwitch:null
+			openForDoubleSwitch:null,
+			major:""
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -45,7 +48,8 @@ class Card extends React.Component {
 		await this.setState({
 			fromTutorial:user.data.tutorialNumber,
 			goToTutorials:this.props.data.goToTutorials,
-			openForDoubleSwitch:this.props.data.openForDoubleSwitch
+			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
+			major:user.data.major  
 		});
 	}
 
@@ -327,6 +331,7 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
+			<div className="text small">Major: {this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
             <div className="text">To: {this.state.goToTutorials}</div>
             <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
@@ -337,10 +342,12 @@ class Card extends React.Component {
 
 class cards extends React.Component {
 	render() {
-		var box = this.props.posts.map((item, i) => {
+		return <div className="app">
+			<Fab><FilterListIcon/></Fab>
+		{this.props.posts.map((item, i) => {
 			return <Card key={i} no={i} color={this.props.color} data={item}/>;
-		});
-		return <div className="app">{box}</div>;
+		})}
+		</div>
 	}
 }
 export default cards;

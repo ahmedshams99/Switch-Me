@@ -321,7 +321,7 @@ exports.addPosts = async function(req,res){
     myUser = allUser.filter(a=>a.fullName==="TRG MORO");
     body = {
         goToTutorials:[8],
-        openForDoubleSwitch:false
+        openForDoubleSwitch:true
 
     }
     console.log("TRG MORO");

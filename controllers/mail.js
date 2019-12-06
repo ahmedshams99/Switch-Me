@@ -1,20 +1,19 @@
-const mail = require("../config/keys");
-const nodemailer = require("nodemailer");
+const keys = require("../config/keys");
+var nodemailer = require("nodemailer");
 
-exports.sendMail(async function(req,res){
+exports.sendMail = async function (req,res){
 
 
     const outPut =  "<h1> Congrats there is an opportunity to switch with the person with the mail... <h1>"+ req.body.opEmail.toString() ;
 
     // create reusable transporter object using the default SMTP transport
-  
     let transporter = nodemailer.createTransport({
-      service: mail.nodemailer.service,
+      service: keys.nodeMailerAccount.service,
   
       auth: {
-        user: mail.nodemailer.email, // generated ethereal user
+        user: keys.nodeMailerAccount.email, // generated ethereal user
   
-        pass: mail.nodemailer.pass // generated ethereal password
+        pass: keys.nodeMailerAccount.pass // generated ethereal password
       }
     });
   
@@ -41,4 +40,4 @@ exports.sendMail(async function(req,res){
         console.log(info);
       }
     });
-});
+};

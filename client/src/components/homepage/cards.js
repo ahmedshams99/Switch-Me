@@ -1,8 +1,8 @@
 import React from "react";
 import "./cards.scss"
 import axios from 'axios'
-import FilterListIcon from '@material-ui/icons/FilterList';
-import Fab from '@material-ui/core/Fab';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -333,20 +333,40 @@ class Card extends React.Component {
 			>
 			<div className="text small">Major: {this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
-            <div className="text">To: {this.state.goToTutorials}</div>
-            <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
+			<div className="text">To: {this.state.goToTutorials? this.state.goToTutorials.map((item,i)=>{return i>0? ", "+item:item}):null}</div>
+            <div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div>
 			</div>
 		);
 	}
 }
 
 class cards extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			user:[],
+			loaded:false
+		}
+	}
+	async componentDidMount() {
+		const arr=this.state.user
+		
+		if(this.props.posts.length>0)
+			this.props.posts.map(async (item) => {
+			axios.get(`/api/users/${item.user}`).then((res)=>{
+				arr.push(res.data)
+				this.setState({user:arr})
+			});
+		})
+	}
 	render() {
+		
 		return <div className="app">
-			<Fab><FilterListIcon/></Fab>
-		{this.props.posts.map((item, i) => {
-			return <Card key={i} no={i} color={this.props.color} data={item}/>;
-		})}
+		{this.state.user.length>0?
+		(this.state.user.map((item, i) => {
+			return (this.props.majorFilter==="" || this.state.user[i].major===this.state.majorFilter)?
+			<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]}/>:null;})):"No posts found"
+		}
 		</div>
 	}
 }

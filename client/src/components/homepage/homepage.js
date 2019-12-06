@@ -11,8 +11,12 @@ import CreatePostModal from './createPostModal'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import './homepage.scss';
-import ImageUploader from 'react-images-upload';
 import FormData from 'form-data'
+import FilterListIcon from '@material-ui/icons/FilterList';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
  
 const registerModalStyle = {
 	content : {
@@ -32,6 +36,14 @@ const loginModalStyle = {
 	}
 };
 
+const createPostModalStyle = {
+	content : {
+	  top                   : '15%',
+	  left                  : '30%',
+	  right                 : '30%',
+	  bottom                : '15%'
+	}
+};
 export default class HomePage extends Component {
 	
 	constructor(props) {
@@ -64,15 +76,16 @@ export default class HomePage extends Component {
 			bold: null,
 			showRegisterModal:false,
 			showLoginModal:false,
-			id:"1",
+			id:"5deaa63f2d36872ce4b804bf",
 			posts:null,
 			redirectProfile:false,
 			showCreatePostModal:false,
 			uploadSchedule:false,
 			pictures: [],
 			selectedFile : null,
-		};	
-        this.onDrop = this.onDrop.bind(this);
+			showFilterModal:false,
+			majorFilter:""
+		};
 
 	}
 	async componentDidMount(){
@@ -150,23 +163,6 @@ export default class HomePage extends Component {
 		
 		this.setState({ showCreatePostModal: !this.state.showCreatePostModal });
 	}
-	
-	async onDrop(picture) {
-        this.setState({
-            pictures: this.state.pictures.concat(picture),
-		});
-		console.log("lalalalala   "+ picture);
-		let data = new FormData();
-		data.append('file', picture, picture);
-
-
-
-
-		
-
-
-
-	}
 	fileSelectedHandler = event =>{
 		this.setState({
 			selectedFile : event.target.files[0]
@@ -196,7 +192,6 @@ export default class HomePage extends Component {
 		}).catch(function(err){
 			console.log(err);
 		});
-
 	}
 	render() {
 		let sectionStyle = {
@@ -205,6 +200,14 @@ export default class HomePage extends Component {
 		}
 		let boldStyle = {
 			color: this.state.bold
+		}
+		const filterModalStyle = {
+			content : {
+			  top                   : '35%',
+			  left                  : '40%',
+			  right                 : '40%',
+			  bottom                : '35%'
+			}
 		}
 		if(this.state.redirectProfile)
 			return <Redirect to="/profile" />
@@ -233,14 +236,7 @@ export default class HomePage extends Component {
 										
 									</div>:
 									<div>
-										<div id="login">Already Registered?  <Button style={{ color:this.state.text}} onClick={()=>{this.toggleLoginModal()}}>Login</Button></div>
-										{/* <ImageUploader
-										withIcon={true}
-										buttonText='Choose images'
-										onChange={this.onDrop}
-										imgExtension={['.jpg', '.gif', '.png', '.gif']}
-										maxFileSize={5242880}/> */}
-										
+										<div id="login">Already Registered?  <Button style={{ color:this.state.text}} onClick={()=>{this.toggleLoginModal()}}>Login</Button></div>						
 									</div>
 					}
 					<ReactModal style={loginModalStyle}isOpen={this.state.showLoginModal} onRequestClose={()=>{this.toggleLoginModal()}}>
@@ -249,10 +245,39 @@ export default class HomePage extends Component {
 					
 			</section>
 			<div id="Cards">
-				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts}/>}
+			<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
+			<ReactModal style={filterModalStyle} isOpen={this.state.showFilterModal} onRequestClose={()=>{this.setState({showFilterModal:!this.state.showFilterModal})}}>
+			<FormControl variant="outlined" fullWidth>
+				<InputLabel>Major</InputLabel>
+					<Select fullWidth value={this.state.majorFilter} onChange={(e)=>{this.setState({majorFilter:e.target.value})}} >
+						<MenuItem value={""}>Show All Majors</MenuItem>
+						<MenuItem value={"Computer Science and Engineering"}>Computer Science and Engineering</MenuItem>
+						<MenuItem value={"Digital Media Engineering and Technology"}>Digital Media Engineering and Technology</MenuItem>
+						<MenuItem value={"Networks"}>Networks</MenuItem>
+						<MenuItem value={"Communications"}>Communications</MenuItem>
+						<MenuItem value={"Electronics"}>Electronics</MenuItem>
+						<MenuItem value={"Materials Engineering"}>Materials Engineering</MenuItem>
+						<MenuItem value={"Design and Production Engineering"}>Design and Production Engineering</MenuItem>
+						<MenuItem value={"Mechatronics Engineering"}>Mechatronics Engineering</MenuItem>
+						<MenuItem value={"Civil Engineering"}>Civil Engineering</MenuItem>
+						<MenuItem value={"Architecture Engineering"}>Architecture Engineering</MenuItem>
+						<MenuItem value={"Pharmacy & Biotechnology"}>Pharmacy & Biotechnology</MenuItem>
+						<MenuItem value={"Biotechnology"}>Biotechnology</MenuItem>
+						<MenuItem value={"General Management"}>General Management</MenuItem>
+						<MenuItem value={"Business Informatics"}>Business Informatics</MenuItem>
+						<MenuItem value={"Technology-based Management"}>Technology-based Management</MenuItem>
+						<MenuItem value={"Graphic Design"}>Graphic Design</MenuItem>
+						<MenuItem value={"Media Design"}>Media Design</MenuItem>
+						<MenuItem value={"Graphic Design"}>Graphic Design</MenuItem>
+						<MenuItem value={"Product Design"}>Product Design</MenuItem>
+						<MenuItem value={"Faculty of Law and Legal Studies"}>Faculty of Law and Legal Studies</MenuItem>
+					</Select>
+				</FormControl>
+			</ReactModal>
+				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter}/>}
 				{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
-				<ReactModal style={loginModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
-					<CreatePostModal id={this.state.id}/>
+				<ReactModal style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
+					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>
 				</ReactModal>
 			</div>
 		</div>

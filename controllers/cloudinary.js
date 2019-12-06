@@ -14,5 +14,4 @@ exports.upload = async function(req,res){
             success:true,
             result
         });
-    });
 }

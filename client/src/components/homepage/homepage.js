@@ -171,12 +171,31 @@ export default class HomePage extends Component {
 		this.setState({
 			selectedFile : event.target.files[0]
 		})	
+		
 	}
 
 	fileUploadHandler(){
+		var apiBaseUrl = 'https://api.cloudinary.com/v1_1/dhulnnjtc/upload';
+		var upPreset = 'ts1wan6f';
+		
+		console.log(this.state.selectedFile);
+
 		let fd = new FormData();
-		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
-		axios.post('/api/users/uploadImage').then(res =>{console.log(res)});
+		fd.append('file' , this.state.selectedFile);
+		fd.append('upload_preset' , upPreset)
+		
+		axios({
+			url:apiBaseUrl,
+			method:'POST',
+			headers:{
+				'Content-Type':'application/x-www-form-urlencoded'
+			},
+			data:fd
+		}).then(function(res){
+			console.log(res);
+		}).catch(function(err){
+			console.log(err);
+		});
 
 	}
 	render() {

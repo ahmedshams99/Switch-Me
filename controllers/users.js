@@ -53,18 +53,25 @@ exports.preCreatePost = async function(req, res)
     //check if someone made a post that works with me
     const myUser = await User.findById(req.params.id);
     var allPosts = await Post.find();
-    allPosts = allPosts.filter(post => post.goToTutorials.includes(myUser.tutorialNumber));
-   
-    if(allPosts.length === 0)
-        return res.send({suggestions:[]});
     var result = [];
-    for(let i = 0;i<allPosts.length;i++)
-    {
-        var tempUser = await User.findById(allPosts[i].user);
-        if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel)&& (req.body.goToTutorials.includes(tempUser.tutorialNumber)) )
+
+    console.log(allPosts[0])
+
+    for(var i=0;i<allPosts.length;i++){
+        if(allPosts[i].goToTutorials.includes(myUser.tutorialNumber)){
             result.push(allPosts[i]);
+        }
     }
-    return res.send({suggestions:result});
+    console.log(myUser.tutorialNumber)
+    
+    var response = [];
+    for(let i = 0;i<result.length;i++)
+    {
+        var tempUser = await User.findById(result[i].user);
+        if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel))
+            response.push(allPosts[i]);
+    }
+    return res.send({suggestions:response});
 }
 
 

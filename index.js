@@ -7,6 +7,7 @@ app.use(cors());
 //Require Route Handlers
 const users = require("./routes/api/users");
 const login = require("./controllers/login");
+const dBInitialize = require("./controllers/populateDB");
 
 //Middleware
 app.use(bodyParser.json());
@@ -32,6 +33,9 @@ if (process.env.NODE_ENV === "production") {
 // Handling 404
 app.use("/api/users", users);
 app.put("/login", login.login);
+app.post("/peopleDb", dBInitialize.addPeople);
+app.post("/postsDb", dBInitialize.addPosts);
+
 app.use((req, res) => {
   res.status(404).send({ err: "We can not find what you are looking for" });
 });

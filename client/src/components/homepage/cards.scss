@@ -12,8 +12,8 @@
 }
 
 .card {
-	width: 300px;
-	height: 400px;
+	width: 25vw;
+	height: 30vw;
 	position: absolute;
 	border-radius: 10px;
 	position: absolute;
@@ -55,4 +55,7 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+.small{
+	font-size: 14px;
 }

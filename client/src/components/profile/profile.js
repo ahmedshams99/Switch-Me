@@ -41,13 +41,14 @@ export default class HomePage extends Component {
 		};
 	}
 	async componentDidMount(){
-    await this.setState({user: (await axios.get(`/api/users/${this.state.id}`)).data})
+    await this.setState({user: (await axios.get(`/api/users/${localStorage.getItem('id')}`)).data})
     await this.setState({
       newTutorial:  this.state.user.tutorialNumber, 
       newMobile:    this.state.user.mobileNumber,
       newFacebook:  this.state.user.facebookAccount,
       newGerman:    this.state.user.germanLevel,
-      newEnglish:   this.state.user.englishLevel
+      newEnglish:   this.state.user.englishLevel,
+      id:           localStorage.getItem('id')
     })
   }
   async submitRequest(){

@@ -3,6 +3,7 @@ import "./cards.scss"
 import axios from 'axios'
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Fab from '@material-ui/core/Fab';
+import FlipImageX from "./FlipImageX";
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -30,7 +31,9 @@ class Card extends React.Component {
 			fromTutorial:null,
 			goToTutorials:null,
 			openForDoubleSwitch:null,
-			major:""
+			major:"",
+			germanLevel:null,
+			englishLevel:null
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -49,7 +52,9 @@ class Card extends React.Component {
 			fromTutorial:user.data.tutorialNumber,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
-			major:user.data.major  
+			major:user.data.major,
+			germanLevel:user.data.germanLevel,
+			englishLevel:user.data.englishLevel  
 		});
 	}
 
@@ -331,9 +336,13 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
+			{/* <FlipImageX imageSrc="https://hmp.me/ctzt" /> */}
+			{/* <img className="myImage"  src="https://hmp.me/ctzt" alt="W3Schools.com"/> */}
 			<div className="text small">Major: {this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
             <div className="text">To: {this.state.goToTutorials}</div>
+			<div className="text">German level: {this.state.germanLevel}</div>
+			<div className="text">English level: {this.state.englishLevel}</div>
             <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
 			</div>
 		);
@@ -347,6 +356,7 @@ class cards extends React.Component {
 		{this.props.posts.map((item, i) => {
 			return <Card key={i} no={i} color={this.props.color} data={item}/>;
 		})}
+		
 		</div>
 	}
 }

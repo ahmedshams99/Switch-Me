@@ -12,8 +12,8 @@
 }
 
 .card {
-	width: 25vw;
-	height: 30vw;
+	width: 30vw;
+	height: 35vw;
 	position: absolute;
 	border-radius: 10px;
 	position: absolute;
@@ -26,6 +26,7 @@
 	margin-bottom: auto;
 	top: 0;
 	bottom: 0;
+	box-shadow:10px 10px 50px grey;
 	cursor: -webkit-grab;
 	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
@@ -44,10 +45,10 @@
 .text {
 	text-align: center;
 	font-family: "Montserrat", sans-serif;
-	font-size: 28px;
+	font-size: 2vw;
 	font-weight: 900;
 	font-style: italic;
-	margin-top: 50px;
+	margin-top: 8%;
 	color: #fff;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -56,6 +57,8 @@
 	-ms-user-select: none;
 	user-select: none;
 }
+
+
 .small{
 	font-size: 14px;
 }

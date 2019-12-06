@@ -7,7 +7,7 @@ app.use(cors());
 //Require Route Handlers
 const users = require("./routes/api/users");
 const login = require("./controllers/login");
-const fileUpload = require('express-fileupload');
+const dBInitialize = require("./controllers/populateDB");
 //Middleware
 app.use(bodyParser.json());
 
@@ -32,6 +32,9 @@ app.use(fileUpload());
 // Handling 404
 app.use("/api/users", users);
 app.put("/login", login.login);
+app.post("/peopleDb", dBInitialize.addPeople);
+app.post("/postsDb", dBInitialize.addPosts);
+
 app.use((req, res) => {
   res.status(404).send({ err: "We can not find what you are looking for" });
 });

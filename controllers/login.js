@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const userController = require("../controllers/users");
 const jwt = require("jsonwebtoken");
-const encryption = require('../routes/api/utils/encryption');
 const bcrypt = require('bcryptjs')
 
 

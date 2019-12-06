@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@material-ui/icons": "^4.5.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.17.0",
     "concurrently": "^5.0.0",
@@ -23,10 +24,10 @@
     "jsonwebtoken": "^8.5.1",
     "mailer": "^0.6.7",
     "mongoose": "^5.7.9",
+    "node-fetch": "^2.6.0",
     "node-sass": "^4.13.0",
     "nodemon": "^2.0.1",
     "start": "^5.1.0",
-    "node-fetch": "^2.6.0",
     "validator": "^12.0.0"
   }
 }

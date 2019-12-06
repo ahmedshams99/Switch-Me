@@ -3,6 +3,7 @@ const userValidator = require("../validations/userValidations");
 const postController = require("./posts");
 const User = require("../models/User");
 const Post = require("../models/Post");
+const server ="http://localhost:5000";
 exports.getUser = async function(req, res) {
     if (!mongoValidator.isMongoId(req.params.id))
         return res.send({ err: "Invalid User Id" });
@@ -60,7 +61,7 @@ exports.preCreatePost = async function(req, res)
     for(let i = 0;i<allPosts.length;i++)
     {
         var tempUser = await User.findById(allPosts[i].user);
-        if((tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel)&& (req.body.goToTutorials.includes(tempUser.tutorialNumber)) )
+        if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel)&& (req.body.goToTutorials.includes(tempUser.tutorialNumber)) )
             result.push(allPosts[i]);
     }
     return res.send({suggestions:result});
@@ -119,7 +120,7 @@ exports.createPost = async function(req, res)
     await postController.createPost(req,res);
 }
 exports.deletePost = async function(req, res)
-{6
+{
     if (!mongoValidator.isMongoId(req.params.userid))
         return res.send({ err: "Invalid User Id" });
     if (!mongoValidator.isMongoId(req.params.postid))
@@ -133,3 +134,29 @@ exports.deletePost = async function(req, res)
     if(!result) return res.send({err:"Error deleting this post."})
     return res.send(result);
 }   
+
+exports.request = async function(req, res)
+{
+    var requestor = req.body.requester;
+    var post = req.body.post;
+    var person = req.body.person;
+
+    if(requestor.germanLevel === person.germanLevel && requestor.englishLevel === person.englishLevel)
+    var body = {
+        email:person.email,
+        opEmail:requestor.email
+    } 
+    
+    await fetch(`${server}/sendMail`, {
+        method: "post",
+        body: JSON.stringify(body),
+        headers: { "Content-Type": "application/json" }
+    }).then(res => {
+        if (res.status === 200) {
+            error = false;
+        }
+        return res.json();
+    }).then(json => {
+        console.log(json);
+    }).catch(err => console.log("Error", err));
+}  

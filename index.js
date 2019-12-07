@@ -29,10 +29,12 @@ if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => res.send("Welcome to Switch Me Backend"));
 }
 // Handling 404
-app.use("/api/users", users);
-app.put("/login", login.login);
 app.post("/peopleDb", dBInitialize.addPeople);
 app.post("/postsDb", dBInitialize.addPosts);
+
+
+app.use("/api/users", users);
+app.put("/login", login.login);
 
 app.use((req, res) => {
   res.status(404).send({ err: "We can not find what you are looking for" });

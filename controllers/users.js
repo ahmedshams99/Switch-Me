@@ -4,6 +4,10 @@ const postController = require("./posts");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const server ="http://localhost:5000";
+const blackListArray = require('./login');
+const jwt = require('jsonwebtoken');
+
+
 exports.getUser = async function(req, res) {
     if (!mongoValidator.isMongoId(req.params.id))
         return res.send({ err: "Invalid User Id" });
@@ -164,3 +168,48 @@ exports.request = async function(req, res)
         console.log(json);
     }).catch(err => console.log("Error", err));
 }  
+
+
+
+isTokenExpired = async () => {
+    try {
+        const LoginTokenValue = await AsyncStorage.getItem('LoginTokenValue');
+        if (JSON.parse(LoginTokenValue).RememberMe) {
+            const { exp } = JwtDecode(LoginTokenValue);
+            if (exp < (new Date().getTime() + 1) / 1000) {
+                this.handleSetTimeout();
+                return false;
+            } else {
+                //Navigate inside the application
+                return true;
+            }
+        } else {
+            //Navigate to the login page
+        }
+    } catch (err) {
+        console.log('Spalsh -> isTokenExpired -> err', err);
+        //Navigate to the login page
+        return false;
+    }
+}
+
+exports.logout = async function(req, res)
+{
+    var blackList = blackListArray.blackList;
+    const bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== "undefined") {
+        const bearer = bearerHeader.split(" ");
+        const bearerToken = bearer[1];
+        
+        blackList.push(bearerToken);
+        console.log("BlackList loggedOut: "+ blackList);
+        blackList.filter(a=>isTokenExpired(a));
+        
+        return res.send("Successfully Logged Out !");
+
+    }else{
+        return res.send({ error: "Not Logged In"});
+    }
+
+
+}

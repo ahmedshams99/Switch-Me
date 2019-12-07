@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 import Button from '@material-ui/core/Button';
 import ReactModal from 'react-modal';
 import Cards from './cards';
-import { Redirect } from "react-router-dom";
 import LoginModal from './loginModal'
 import RegisterModal from './registerModal'
 import CreatePostModal from './createPostModal'
@@ -19,6 +18,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import SnackBar from "../snackbar";
 
+import Profile from '../profile/profile'
+import FilterModal from './filterModal'
 const registerModalStyle = {
 	content : {
 	  top                   : '5%',
@@ -77,12 +78,15 @@ export default class HomePage extends Component {
 			bold: null,
 			showRegisterModal:false,
 			showLoginModal:false,
-			id:"5deaa63f2d36872ce4b804bf",
+			id:"5deb854ebc1d3234c8ffc38c",
 			tutorialNumber: '',
 			dash: '',
 			major: '',
 			posts: null,
+			germanLevel:"",
+			englishLevel:"",
 			redirectProfile:false,
+			showProfileModal:false,
 			showCreatePostModal:false,
 			uploadSchedule:false,
 			pictures: [],
@@ -90,6 +94,7 @@ export default class HomePage extends Component {
 			showFilterModal:false,
 			majorFilter:"",
 			alerted:false
+			dashFilter:""
 		};
 
 	}
@@ -103,7 +108,9 @@ export default class HomePage extends Component {
 			posts: posts.data,
 			tutorialNumber:me.data.tutorialNumber,
 			dash:me.data.dash,
-			major:me.data.major
+			major:me.data.major,
+			germanLevel:me.data.germanLevel,
+			englishLevel:me.data.englishLevel
 		});
 	}
 
@@ -161,6 +168,9 @@ export default class HomePage extends Component {
     toggleLoginModal () {
 		this.setState({ showLoginModal: !this.state.showLoginModal });
 	}
+    toggleProfileModal () {
+		this.setState({ showProfileModal: !this.state.showProfileModal });
+	}
 	toggleLoginModalInside (loggedInId,token) {
 		this.setState({ showLoginModal: !this.state.showLoginModal });
 		if(loggedInId)
@@ -203,7 +213,9 @@ export default class HomePage extends Component {
 				tutorialNumber: me.state.tutorialNumber ,
 				dash: me.state.dash ,
 				major: me.state.major,
-				url:link
+				url:link,
+				germanLevel:me.state.germanLevel,
+				englishLevel:me.state.englishLevel
 			}
 			try{
 				axios.post(`/api/users/schedule`,body).then((res)=>{
@@ -251,6 +263,13 @@ export default class HomePage extends Component {
 			// }
 		
 	}
+	
+	async filterMajorState(e){
+		await this.setState({majorFilter:e.target.value})
+	}
+	async filterDashState(e){
+		await this.setState({dashFilter:e.target.value})
+	}
 	render() {
 		let alertSnack;
 		if (this.state.alerted)
@@ -275,8 +294,14 @@ export default class HomePage extends Component {
 			  bottom                : '35%'
 			}
 		}
-		if(this.state.redirectProfile)
-			return <Redirect to="/profile" />
+		const profileModalStyle = {
+			content : {
+			  top                   : '0%',
+			  left                  : '37%',
+			  right                 : '37%',
+			  bottom                : '0%'
+			}
+		}
 		return <div>
 		<section id="app" onMouseMove={this.onMouseMove.bind(this)} style={sectionStyle}>
 				<h1 className="middle" ref="section">
@@ -293,17 +318,20 @@ export default class HomePage extends Component {
 						var scrollTo=document.getElementById("Cards").getClientRects()[0].y
 						window.scrollBy({top: scrollTo, left: 0, behavior: 'smooth'})
 						}}/>
+					<ReactModal style={profileModalStyle}isOpen={this.state.showProfileModal} onRequestClose={()=>{this.toggleProfileModal()}}>
+						<Profile id={this.state.id}/>
+					</ReactModal>
 					{this.state.id? <div>
 					<div id="login"><Button style={{ color:this.state.text}} onClick={()=>{
-										this.setState({redirectProfile:true})}}>Profile</Button><br/>
-										<input type="file" onChange = {this.fileSelectedHandler}/><br/>
+					this.setState({showProfileModal:true})}}>Profile</Button><br/>
+					<input type="file" onChange = {this.fileSelectedHandler}/><br/>
 					<Button style={{ color:this.state.text}} onClick={this.fileUploadHandler.bind(this)}>Upload</Button>
-										</div> 
-										
-									</div>:
-									<div>
-										<div id="login">Already Registered?  <Button style={{ color:this.state.text}} onClick={()=>{this.toggleLoginModal()}}>Login</Button></div>						
-									</div>
+					</div> 
+					</div>
+					:
+					<div>
+						<div id="login">Already Registered?  <Button style={{ color:this.state.text}} onClick={()=>{this.toggleLoginModal()}}>Login</Button></div>						
+					</div>
 					}
 					<ReactModal style={loginModalStyle}isOpen={this.state.showLoginModal} onRequestClose={()=>{this.toggleLoginModal()}}>
 					<LoginModal clickMe={this.toggleLoginModalInside.bind(this)}/>
@@ -311,37 +339,12 @@ export default class HomePage extends Component {
 					
 			</section>
 			<div id="Cards">
-			<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
+				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} dashFilter={this.state.dashFilter} senderID={this.state.id}/>}
 			<ReactModal style={filterModalStyle} isOpen={this.state.showFilterModal} onRequestClose={()=>{this.setState({showFilterModal:!this.state.showFilterModal})}}>
-			<FormControl variant="outlined" fullWidth>
-				<InputLabel>Major</InputLabel>
-					<Select fullWidth value={this.state.majorFilter} onChange={(e)=>{this.setState({majorFilter:e.target.value})}} >
-						<MenuItem value={""}>Show All Majors</MenuItem>
-						<MenuItem value={"Computer Science and Engineering"}>Computer Science and Engineering</MenuItem>
-						<MenuItem value={"Digital Media Engineering and Technology"}>Digital Media Engineering and Technology</MenuItem>
-						<MenuItem value={"Networks"}>Networks</MenuItem>
-						<MenuItem value={"Communications"}>Communications</MenuItem>
-						<MenuItem value={"Electronics"}>Electronics</MenuItem>
-						<MenuItem value={"Materials Engineering"}>Materials Engineering</MenuItem>
-						<MenuItem value={"Design and Production Engineering"}>Design and Production Engineering</MenuItem>
-						<MenuItem value={"Mechatronics Engineering"}>Mechatronics Engineering</MenuItem>
-						<MenuItem value={"Civil Engineering"}>Civil Engineering</MenuItem>
-						<MenuItem value={"Architecture Engineering"}>Architecture Engineering</MenuItem>
-						<MenuItem value={"Pharmacy & Biotechnology"}>Pharmacy & Biotechnology</MenuItem>
-						<MenuItem value={"Biotechnology"}>Biotechnology</MenuItem>
-						<MenuItem value={"General Management"}>General Management</MenuItem>
-						<MenuItem value={"Business Informatics"}>Business Informatics</MenuItem>
-						<MenuItem value={"Technology-based Management"}>Technology-based Management</MenuItem>
-						<MenuItem value={"Graphic Design"}>Graphic Design</MenuItem>
-						<MenuItem value={"Media Design"}>Media Design</MenuItem>
-						<MenuItem value={"Graphic Design"}>Graphic Design</MenuItem>
-						<MenuItem value={"Product Design"}>Product Design</MenuItem>
-						<MenuItem value={"Faculty of Law and Legal Studies"}>Faculty of Law and Legal Studies</MenuItem>
-					</Select>
-				</FormControl>
+					<FilterModal onFilterMajor={this.filterMajorState.bind(this)} onFilterDash={this.filterDashState.bind(this)}/>
 			</ReactModal>
-				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} senderID={this.state.id}/>}
 				{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
+				<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
 				<ReactModal style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
 					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>
 				</ReactModal>

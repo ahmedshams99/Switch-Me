@@ -4,6 +4,10 @@ import axios from 'axios'
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Fab from '@material-ui/core/Fab';
 import FlipImageX from "./FlipImageX";
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+import Button from '@material-ui/core/Button';
+
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -33,7 +37,9 @@ class Card extends React.Component {
 			openForDoubleSwitch:null,
 			major:"",
 			germanLevel:null,
-			englishLevel:null
+			englishLevel:null,
+			email:"",
+			dash:""
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -48,14 +54,31 @@ class Card extends React.Component {
 	async componentDidMount() {
 		this.animate();
 		const user= await axios.get(`/api/users/${this.props.data.user}`);
+		const sender = await axios.get(`/api/users/${this.props.senderID}`)
 		await this.setState({
 			fromTutorial:user.data.tutorialNumber,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
 			major:user.data.major,
 			germanLevel:user.data.germanLevel,
-			englishLevel:user.data.englishLevel  
+			englishLevel:user.data.englishLevel,
+			email:user.data.email,
+			dash:user.data.dash,
+
+			senderEmail:sender.data.email,
+			senderFullName:sender.data.fullName,
+			senderDash:sender.data.dash,
+			senderID:sender.data.ID,
+			senderMajor:sender.data.major,
+			senderTutorial:sender.data.tutorialNumber,
+			senderMobileNumber:sender.data.mobileNumber,
+			senderFacebookAccount:sender.data.facebookAccount,
+			senderGermanLevel:sender.data.germanLevel,
+			senderEnglishLevel:sender.data.englishLevel
 		});
+		axios.get(`/api/users/schedule/${this.state.fromTutorial}/${this.state.dash}/${this.state.major}`).then((res)=>{
+			this.setState({scheduleLink:res.data.link})
+		})
 	}
 
 	handleDown(e) {
@@ -336,27 +359,66 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
-			{/* <FlipImageX imageSrc="https://hmp.me/ctzt" /> */}
-			{/* <img className="myImage"  src="https://hmp.me/ctzt" alt="W3Schools.com"/> */}
-			<div className="text small">Major: {this.state.major}</div>
+
+			{this.state.scheduleLink? <img alt={"schedule"} style={{width:"22vw",height:"12vw"}}src={this.state.scheduleLink}/>:
+			<img alt={"schedule"} style={{width:"12vw",height:"12vw"}}src="https://cdn3.iconfinder.com/data/icons/calendar-28/200/181-512.png"/>}
+			<div className="text small">Major: {this.state.dash}-{this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
-            <div className="text">To: {this.state.goToTutorials}</div>
-			<div className="text">German level: {this.state.germanLevel}</div>
-			<div className="text">English level: {this.state.englishLevel}</div>
-            <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
+			<div className="text">To: {this.state.goToTutorials? this.state.goToTutorials.map((item,i)=>{return i>0? ", "+item:item}):null}</div>
+			<div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div>
+			<Button onClick={()=>{
+				const body={
+					email:this.state.email,
+					subject:"Request to switch",
+					senderEmail:this.state.senderEmail,
+					senderFullName:this.state.senderFullName,
+					senderDash:this.state.senderDash,
+					senderID:this.state.senderID,
+					senderMajor:this.state.senderMajor,
+					senderTutorial:this.state.senderTutorial,
+					senderMobileNumber:this.state.senderMobileNumber,
+					senderFacebookAccount:this.state.senderFacebookAccount,
+					senderGermanLevel:this.state.senderGermanLevel,
+					senderEnglishLevel:this.state.senderEnglishLevel
+				}
+				axios.post('/api/users/sendMail',body)
+			}}>Send Request</Button>
 			</div>
 		);
 	}
 }
 
 class cards extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			user:[],
+			loaded:false
+		}
+	}
+	async componentDidMount() {
+		let arr=this.state.user
+		if(this.props.posts.length>0)
+			this.props.posts.map(async (item) => {
+			axios.get(`/api/users/${item.user}`).then((res)=>{
+				arr.push(res.data)
+				this.setState({user:arr})
+			});
+		})
+	}
 	render() {
-		return <div className="app">
-			<Fab><FilterListIcon/></Fab>
-		{this.props.posts.map((item, i) => {
-			return <Card key={i} no={i} color={this.props.color} data={item}/>;
-		})}
 		
+		return <div className="app">
+
+		{this.state.user.length>0?
+		(
+				this.state.user.map((item, i) => 
+			{
+				return (this.props.majorFilter==="" || this.state.user[i].major===this.state.majorFilter)?
+				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID}/>:null;
+			})
+		):"No posts found"
+		}
 		</div>
 	}
 }

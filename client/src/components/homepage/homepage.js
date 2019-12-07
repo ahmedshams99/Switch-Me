@@ -17,7 +17,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
- 
+import SnackBar from "../snackbar";
+
 const registerModalStyle = {
 	content : {
 	  top                   : '5%',
@@ -87,7 +88,8 @@ export default class HomePage extends Component {
 			pictures: [],
 			selectedFile : null,
 			showFilterModal:false,
-			majorFilter:""
+			majorFilter:"",
+			alerted:false
 		};
 
 	}
@@ -179,7 +181,8 @@ export default class HomePage extends Component {
 		
 	}
 
-	fileUploadHandler(){
+	async fileUploadHandler(){
+		await this.setState({ alerted: false, alertType: "", alertMsg: "" });
 		var apiBaseUrl = 'https://api.cloudinary.com/v1_1/dhulnnjtc/upload';
 		var upPreset = 'ts1wan6f';
 
@@ -194,7 +197,7 @@ export default class HomePage extends Component {
 				'Content-Type':'application/x-www-form-urlencoded'
 			},
 			data:fd
-		}).then(function(res){
+		}).then(async function(res){
 			var link = res.data.secure_url;
 			const body={
 				tutorialNumber: me.state.tutorialNumber ,
@@ -202,15 +205,61 @@ export default class HomePage extends Component {
 				major: me.state.major,
 				url:link
 			}
-			axios.post(`/api/users/schedule`,body).then((res)=>{
-				console.log(res)
-			});
+			try{
+				axios.post(`/api/users/schedule`,body).then((res)=>{
+					console.log(res);
+				});
+				await me.setState({
+					alerted: true,
+					alertType: "success",
+					alertMsg: "You Have Uploaded a Schedule"
+				});
+				//window.location.reload();
+			} catch (err) {
+				await me.setState({
+					alerted: true,
+					alertType: "error",
+					alertMsg: err.response.data.error
+				});
+				}
+			
 
-		}).catch(function(err){
+		}).catch(async function(err){
 			console.log(err);
+			await me.setState({
+				alerted: true,
+				alertType: "error",
+				alertMsg: err.response.data.error
+			});
 		});
+
+			// await this.setState({ alerted: false, alertType: "", alertMsg: "" });
+			// try {
+			//   await axios.put(`api/lawyers/updateCaseStatus/${caseId}/OnUpdate`);
+			//   await this.setState({
+			// 	alerted: true,
+			// 	alertType: "error",
+			// 	alertMsg: "You Have Rejected This Case"
+			//   });
+			//   window.location.reload();
+			// } catch (err) {
+			//   await this.setState({
+			// 	alerted: true,
+			// 	alertType: "error",
+			// 	alertMsg: err.response.data.error
+			//   });
+			// }
+		
 	}
 	render() {
+		let alertSnack;
+		if (this.state.alerted)
+		alertSnack = (
+			<SnackBar
+			message={this.state.alertMsg}
+			variant={this.state.alertType}
+			/>
+		);
 		let sectionStyle = {
 			backgroundColor: this.state.background,
 			color: this.state.text
@@ -297,6 +346,16 @@ export default class HomePage extends Component {
 					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>
 				</ReactModal>
 			</div>
+			<div
+              style={{
+                align: "center",
+                display: "flex",
+                marginTop: "-50px",
+                marginBottom: "20px"
+              }}
+            >
+              {alertSnack}
+            </div>
 		</div>
 	}
 }

@@ -77,7 +77,10 @@ export default class HomePage extends Component {
 			showRegisterModal:false,
 			showLoginModal:false,
 			id:"5deaa63f2d36872ce4b804bf",
-			posts:null,
+			tutorialNumber: '',
+			dash: '',
+			major: '',
+			posts: null,
 			redirectProfile:false,
 			showCreatePostModal:false,
 			uploadSchedule:false,
@@ -93,7 +96,13 @@ export default class HomePage extends Component {
 		if(localStorage.getItem("loggedIn"))
 			this.setState({ lang: localStorage.getItem("lang") });
 		let posts=await axios.get(`/api/users/getAllPosts`);
-		this.setState({posts: posts.data});
+		let me=await axios.get(`/api/users/${this.state.id}`)
+		this.setState({
+			posts: posts.data,
+			tutorialNumber:me.data.tutorialNumber,
+			dash:me.data.dash,
+			major:me.data.major
+		});
 	}
 
     onMouseMove(e) {	
@@ -173,13 +182,11 @@ export default class HomePage extends Component {
 	fileUploadHandler(){
 		var apiBaseUrl = 'https://api.cloudinary.com/v1_1/dhulnnjtc/upload';
 		var upPreset = 'ts1wan6f';
-		
-		console.log(this.state.selectedFile);
 
 		let fd = new FormData();
 		fd.append('file' , this.state.selectedFile);
 		fd.append('upload_preset' , upPreset)
-		
+		let me =this
 		axios({
 			url:apiBaseUrl,
 			method:'POST',
@@ -188,7 +195,17 @@ export default class HomePage extends Component {
 			},
 			data:fd
 		}).then(function(res){
-			console.log(res);
+			var link = res.data.secure_url;
+			const body={
+				tutorialNumber: me.state.tutorialNumber ,
+				dash: me.state.dash ,
+				major: me.state.major,
+				url:link
+			}
+			axios.post(`/api/users/schedule`,body).then((res)=>{
+				console.log(res)
+			});
+
 		}).catch(function(err){
 			console.log(err);
 		});
@@ -228,11 +245,11 @@ export default class HomePage extends Component {
 						window.scrollBy({top: scrollTo, left: 0, behavior: 'smooth'})
 						}}/>
 					{this.state.id? <div>
-										<div id="login"><Button style={{ color:this.state.text}} onClick={()=>{
-															this.setState({redirectProfile:true})}}>Profile</Button><br/>
-															<input type="file" onChange = {this.fileSelectedHandler}/><br/>
-										<Button style={{ color:this.state.text}} onClick={this.fileUploadHandler.bind(this)}>Upload</Button>
-															</div> 
+					<div id="login"><Button style={{ color:this.state.text}} onClick={()=>{
+										this.setState({redirectProfile:true})}}>Profile</Button><br/>
+										<input type="file" onChange = {this.fileSelectedHandler}/><br/>
+					<Button style={{ color:this.state.text}} onClick={this.fileUploadHandler.bind(this)}>Upload</Button>
+										</div> 
 										
 									</div>:
 									<div>
@@ -274,7 +291,7 @@ export default class HomePage extends Component {
 					</Select>
 				</FormControl>
 			</ReactModal>
-				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter}/>}
+				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} senderID={this.state.id}/>}
 				{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
 				<ReactModal style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
 					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>

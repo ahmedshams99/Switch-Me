@@ -55,14 +55,11 @@ exports.preCreatePost = async function(req, res)
     var allPosts = await Post.find();
     var result = [];
 
-    console.log(allPosts[0])
-
     for(var i=0;i<allPosts.length;i++){
         if(allPosts[i].goToTutorials.includes(myUser.tutorialNumber)){
             result.push(allPosts[i]);
         }
     }
-    console.log(myUser.tutorialNumber)
     
     var response = [];
     for(let i = 0;i<result.length;i++)

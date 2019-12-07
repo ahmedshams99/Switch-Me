@@ -18,9 +18,10 @@ class createPostModal extends React.Component {
         }
     }
     async componentDidMount(){
-        const getOptions=await axios.get(`/api/users/preCreatePost/${this.state.id}`);
-        // console.log(getOptions.data)
-        this.setState({posts:getOptions.data})
+        axios.get(`/api/users/preCreatePost/${this.state.id}`).then((res)=>{
+            this.setState({posts:res.data.suggestions})
+            // console.log(this.state.posts)
+        })
     }
     handleAdd(){
         let arr=this.state.goToTutorials;
@@ -50,17 +51,13 @@ class createPostModal extends React.Component {
     render() {
         return <div style={{textAlign:"center"}}>
             {this.state.error}
-            <TextField fullWidth id="outlined-basic" label="Go To Tutorial" variant="outlined" onChange={async (e)=>{
-                this.setState({tutorial:e.target.value})
-                const getOptions=await axios.get(`/api/users/preCreatePost/${this.state.id}`);
-                this.setState({posts:getOptions.data})
-            }}/>
+            <TextField fullWidth id="outlined-basic" label="Go To Tutorial" variant="outlined" onChange={async (e)=>{this.setState({tutorial:e.target.value})}}/>
             <Button onClick={()=>{this.handleAdd()}}>Add</Button>
             <Button onClick={()=>{this.setState({goToTutorials:[],tutorial:this.state.tutorial})}}>Clear</Button><br/>
             {this.state.goToTutorials.map((item,i)=>{return<div key={i} style={{display:"inline"}}>{+i>0? ",":""}{item}</div>})}<br/>
             <FormControlLabel value="end" control={<Checkbox color="primary" />} label="is Open For Double Switch" labelPlacement="end" onChange={()=>{this.setState({openForDoubleSwitch: !this.state.openForDoubleSwitch})}}/><br/>
             <Button onClick={this.handleClick.bind(this)}>Create Post</Button>
-            {this.state.posts.length===0? null:<Cards color={this.props.randColor} posts={this.state.posts}/>}
+            {this.state.posts.length>0? <Cards color={this.props.randColor} posts={this.state.posts} majorFilter="" senderID={this.state.id}/>:"No suggestions"}
         </div>
     }
 

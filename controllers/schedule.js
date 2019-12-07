@@ -1,7 +1,6 @@
 const mongoValidator = require("validator");
-const scheduleValidator = require("../validations/scheduleValidations");
+const scheduleValidator = require("../validations/scheduleValidation");
 const Schedule = require("../models/Schedule");
-const cloudinary = require('../routes/api/utils/cloudinary');
 
 exports.createSchedule = async function(req, res) {
     const isValidatedUser=scheduleValidator.validationSchema(req.body);
@@ -10,16 +9,12 @@ exports.createSchedule = async function(req, res) {
     const scheduleExist=await Schedule.findOne({ tutorialNumber: req.body.tutorialNumber , dash: req.body.dash , major: req.body.major });
     if(scheduleExist) return res.send({err: "Somebody has already uploaded this schedule."})
     var result;
-    const myUrl
-    cloudinary.upload(req,result);
-    if(result.success===true){
-        myUrl = result.url;
-    }
+    var myUrl;
     const mySchedule = {
         dash:req.body.dash,
         tutorialNumber:req.body.tutorialNumber,
         major:req.body.major,
-        url:myUrl,
+        url:req.body.url,
     }
 
     const schedule = await Schedule.create(mySchedule);
@@ -28,7 +23,8 @@ exports.createSchedule = async function(req, res) {
 
 
 exports.getSchedule = async function(req, res) {
-    const schedule= await Schedule.findOne({ tutorialNumber: req.body.tutorialNumber , dash: req.body.dash , major: req.body.major });
-    if(schedule) return res.send(schedule);
+    const schedule= await Schedule.findOne({ tutorialNumber: req.params.tutorialNumber , dash: req.params.dash , major: req.params.major });
+    // console.log(schedule)
+    if(schedule) return res.send({link:schedule.url});
     return res.send({err: "schedule not available"})
 }

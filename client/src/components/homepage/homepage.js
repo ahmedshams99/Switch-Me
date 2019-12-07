@@ -77,6 +77,9 @@ export default class HomePage extends Component {
 			dash: '',
 			major: '',
 			posts: null,
+			germanLevel:"",
+			englishLevel:"",
+			redirectProfile:false,
 			showProfileModal:false,
 			showCreatePostModal:false,
 			uploadSchedule:false,
@@ -98,7 +101,9 @@ export default class HomePage extends Component {
 			posts: posts.data,
 			tutorialNumber:me.data.tutorialNumber,
 			dash:me.data.dash,
-			major:me.data.major
+			major:me.data.major,
+			germanLevel:me.data.germanLevel,
+			englishLevel:me.data.englishLevel
 		});
 	}
 
@@ -200,7 +205,9 @@ export default class HomePage extends Component {
 				tutorialNumber: me.state.tutorialNumber ,
 				dash: me.state.dash ,
 				major: me.state.major,
-				url:link
+				url:link,
+				germanLevel:me.state.germanLevel,
+				englishLevel:me.state.englishLevel
 			}
 			axios.post(`/api/users/schedule`,body).then((res)=>{
 				console.log(res)

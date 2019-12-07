@@ -39,6 +39,31 @@ const ScheduleSchema = new Schema({
     url:{
       type:String,
       required:true
-    }
+    },
+    germanLevel: {
+      type: String,
+      enum: [
+        "German Language I",
+        "German Language II",
+        "German Language III",
+        "German Language IV",
+        "None"
+      ],
+      default: "None",
+      required: true
+  },
+  englishLevel: {
+      type: String,
+      enum: [
+        "Academic English",
+        "Academic Study Skills",
+        "Critical Thinking & Scientific Methodology",
+        "Communication & Presentation Skills",
+        "Research Paper Writing",
+        "None"
+      ],
+      default: "None",
+      required: true
+  }
     });
     module.exports = User = mongoose.model("Schedule", ScheduleSchema);

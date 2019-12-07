@@ -13,7 +13,7 @@
 
 .card {
 	width: 30vw;
-	height: 35vw;
+	height: 37vw;
 	position: absolute;
 	border-radius: 10px;
 	position: absolute;
@@ -48,7 +48,7 @@
 	font-size: 2vw;
 	font-weight: 900;
 	font-style: italic;
-	margin-top: 8%;
+	margin-top: 2%;
 	color: #fff;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -57,8 +57,9 @@
 	-ms-user-select: none;
 	user-select: none;
 }
-
-
 .small{
 	font-size: 14px;
+}
+.inline{
+	display: inline;
 }

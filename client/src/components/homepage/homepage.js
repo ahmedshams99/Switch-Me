@@ -12,12 +12,7 @@ import AddIcon from '@material-ui/icons/Add';
 import './homepage.scss';
 import FormData from 'form-data'
 import FilterListIcon from '@material-ui/icons/FilterList';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
 import SnackBar from "../snackbar";
-
 import Profile from '../profile/profile'
 import FilterModal from './filterModal'
 const registerModalStyle = {
@@ -93,7 +88,7 @@ export default class HomePage extends Component {
 			selectedFile : null,
 			showFilterModal:false,
 			majorFilter:"",
-			alerted:false
+			alerted:false,
 			dashFilter:""
 		};
 
@@ -187,8 +182,7 @@ export default class HomePage extends Component {
 	fileSelectedHandler = event =>{
 		this.setState({
 			selectedFile : event.target.files[0]
-		})	
-		
+		})
 	}
 
 	async fileUploadHandler(){
@@ -244,24 +238,6 @@ export default class HomePage extends Component {
 				alertMsg: err.response.data.error
 			});
 		});
-
-			// await this.setState({ alerted: false, alertType: "", alertMsg: "" });
-			// try {
-			//   await axios.put(`api/lawyers/updateCaseStatus/${caseId}/OnUpdate`);
-			//   await this.setState({
-			// 	alerted: true,
-			// 	alertType: "error",
-			// 	alertMsg: "You Have Rejected This Case"
-			//   });
-			//   window.location.reload();
-			// } catch (err) {
-			//   await this.setState({
-			// 	alerted: true,
-			// 	alertType: "error",
-			// 	alertMsg: err.response.data.error
-			//   });
-			// }
-		
 	}
 	
 	async filterMajorState(e){
@@ -318,13 +294,15 @@ export default class HomePage extends Component {
 						var scrollTo=document.getElementById("Cards").getClientRects()[0].y
 						window.scrollBy({top: scrollTo, left: 0, behavior: 'smooth'})
 						}}/>
-					<ReactModal style={profileModalStyle}isOpen={this.state.showProfileModal} onRequestClose={()=>{this.toggleProfileModal()}}>
+					<ReactModal style={profileModalStyle} isOpen={this.state.showProfileModal} onRequestClose={()=>{this.toggleProfileModal()}}>
 						<Profile id={this.state.id}/>
 					</ReactModal>
 					{this.state.id? <div>
 					<div id="login"><Button style={{ color:this.state.text}} onClick={()=>{
 					this.setState({showProfileModal:true})}}>Profile</Button><br/>
-					<input type="file" onChange = {this.fileSelectedHandler}/><br/>
+					<Button style={{ color:this.state.text}} component="label">Upload Schedule<input type="file" onChange = {this.fileSelectedHandler} style={{ display: "none" }}/></Button><br/>
+
+					<h6>{this.state.selectedFile? this.state.selectedFile.name:"No file Selected"}</h6><br/>
 					<Button style={{ color:this.state.text}} onClick={this.fileUploadHandler.bind(this)}>Upload</Button>
 					</div> 
 					</div>
@@ -334,7 +312,7 @@ export default class HomePage extends Component {
 					</div>
 					}
 					<ReactModal style={loginModalStyle}isOpen={this.state.showLoginModal} onRequestClose={()=>{this.toggleLoginModal()}}>
-					<LoginModal clickMe={this.toggleLoginModalInside.bind(this)}/>
+						<LoginModal clickMe={this.toggleLoginModalInside.bind(this)}/>
 					</ReactModal>
 					
 			</section>

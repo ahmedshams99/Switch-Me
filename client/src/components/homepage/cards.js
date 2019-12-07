@@ -1,9 +1,13 @@
 import React from "react";
 import "./cards.scss"
 import axios from 'axios'
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Fab from '@material-ui/core/Fab';
+import FlipImageX from "./FlipImageX";
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
+
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -32,6 +36,8 @@ class Card extends React.Component {
 			goToTutorials:null,
 			openForDoubleSwitch:null,
 			major:"",
+			germanLevel:null,
+			englishLevel:null,
 			email:"",
 			dash:""
 		};
@@ -54,6 +60,8 @@ class Card extends React.Component {
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
 			major:user.data.major,
+			germanLevel:user.data.germanLevel,
+			englishLevel:user.data.englishLevel,
 			email:user.data.email,
 			dash:user.data.dash,
 
@@ -351,6 +359,7 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
+
 			{this.state.scheduleLink? <img alt={"schedule"} style={{width:"22vw",height:"12vw"}}src={this.state.scheduleLink}/>:
 			<img alt={"schedule"} style={{width:"12vw",height:"12vw"}}src="https://cdn3.iconfinder.com/data/icons/calendar-28/200/181-512.png"/>}
 			<div className="text small">Major: {this.state.dash}-{this.state.major}</div>
@@ -400,6 +409,7 @@ class cards extends React.Component {
 	render() {
 		
 		return <div className="app">
+
 		{this.state.user.length>0?
 		(
 				this.state.user.map((item, i) => 

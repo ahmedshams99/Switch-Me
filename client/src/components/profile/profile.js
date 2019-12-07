@@ -41,7 +41,7 @@ export default class HomePage extends Component {
 		};
 	}
 	async componentDidMount(){
-    await this.setState({user: (await axios.get(`/api/users/${localStorage.getItem('id')}`)).data})
+    await this.setState({user: (await axios.get(`/api/users/${this.props.id}`)).data})
     await this.setState({
       newTutorial:  this.state.user.tutorialNumber, 
       newMobile:    this.state.user.mobileNumber,
@@ -117,7 +117,7 @@ export default class HomePage extends Component {
         <List style={classes.root}>
           <ListItem>
             <ListItemText primary="Full Name" secondary={this.state.user? this.state.user.fullName:"Loading"} />
-            <Avatar style={styles.purpleAvatar}> {this.state.user? this.state.user.fullName.charAt(0):"?"}</Avatar>
+            <Avatar style={styles.purpleAvatar}> {this.state.user? this.state.user.fullName.toUpperCase().charAt(0):"?"}</Avatar>
           </ListItem>
           <Divider />
           <ListItem>

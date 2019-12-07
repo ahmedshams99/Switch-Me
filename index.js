@@ -28,7 +28,6 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.get("/", (req, res) => res.send("Welcome to Switch Me Backend"));
 }
-app.use(fileUpload());
 // Handling 404
 app.use("/api/users", users);
 app.put("/login", login.login);

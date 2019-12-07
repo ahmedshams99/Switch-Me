@@ -1,9 +1,6 @@
 import React from "react";
 import "./cards.scss"
 import axios from 'axios'
-import FilterListIcon from '@material-ui/icons/FilterList';
-import Fab from '@material-ui/core/Fab';
-import FlipImageX from "./FlipImageX";
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
@@ -39,7 +36,8 @@ class Card extends React.Component {
 			germanLevel:null,
 			englishLevel:null,
 			email:"",
-			dash:""
+			dash:"",
+			majorFilter:this.props.majorFilter
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -407,14 +405,13 @@ class cards extends React.Component {
 		})
 	}
 	render() {
-		
 		return <div className="app">
 
 		{this.state.user.length>0?
 		(
 				this.state.user.map((item, i) => 
 			{
-				return (this.props.majorFilter==="" || this.state.user[i].major===this.state.majorFilter)?
+				return ((this.props.majorFilter==="" || this.state.user[i].major===this.props.majorFilter) && (this.props.dashFilter==="" || this.state.user[i].dash===this.props.dashFilter))?
 				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID}/>:null;
 			})
 		):"No posts found"

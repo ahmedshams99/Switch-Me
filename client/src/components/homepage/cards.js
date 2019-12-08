@@ -37,7 +37,9 @@ class Card extends React.Component {
 			englishLevel:null,
 			email:"",
 			dash:"",
-			majorFilter:this.props.majorFilter
+			majorFilter:this.props.majorFilter,
+			postid:"",
+			creatorID:""
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -53,9 +55,11 @@ class Card extends React.Component {
 		this.animate();
 		const user= await axios.get(`/api/users/${this.props.data.user}`);
 		await this.setState({
-			fromTutorial:user.data.tutorialNumber,
+			postid:this.props.data._id,
+			creatorID:this.props.data.user,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
+			fromTutorial:user.data.tutorialNumber,
 			major:user.data.major,
 			germanLevel:user.data.germanLevel,
 			englishLevel:user.data.englishLevel,
@@ -361,7 +365,11 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
-
+			{this.props.senderID===this.state.creatorID? <Button style={{right:"-13vw"}} onClick={async ()=>{
+				const response=await axios.delete(`/api/users/${this.props.senderID}/${this.state.postid}`)
+				if(!response.data.err)
+					window.location.reload();
+			}}><CloseIcon/></Button>:null}{this.props.senderID===this.state.creatorID? <br/>:null}
 			{this.state.scheduleLink? <img alt={"schedule"} style={{width:"22vw",height:"12vw"}}src={this.state.scheduleLink}/>:
 			<img alt={"schedule"} style={{width:"12vw",height:"12vw"}}src="https://cdn3.iconfinder.com/data/icons/calendar-28/200/181-512.png"/>}
 			<div className="text small">Major: {this.state.dash}-{this.state.major}</div>
@@ -418,7 +426,7 @@ class cards extends React.Component {
 				this.state.user.map((item, i) => 
 			{
 				return ((this.props.majorFilter==="" || this.state.user[i].major===this.props.majorFilter) && (this.props.dashFilter==="" || this.state.user[i].dash===this.props.dashFilter))?
-				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID}/>:null;
+				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID} />:null;
 			})
 		):"No posts found"
 		}

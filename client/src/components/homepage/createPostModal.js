@@ -20,7 +20,6 @@ class createPostModal extends React.Component {
     async componentDidMount(){
         axios.get(`/api/users/preCreatePost/${this.state.id}`).then((res)=>{
             this.setState({posts:res.data.suggestions})
-            // console.log(this.state.posts)
         })
     }
     handleAdd(){
@@ -56,8 +55,16 @@ class createPostModal extends React.Component {
             <Button onClick={()=>{this.setState({goToTutorials:[],tutorial:this.state.tutorial})}}>Clear</Button><br/>
             {this.state.goToTutorials.map((item,i)=>{return<div key={i} style={{display:"inline"}}>{+i>0? ",":""}{item}</div>})}<br/>
             <FormControlLabel value="end" control={<Checkbox color="primary" />} label="is Open For Double Switch" labelPlacement="end" onChange={()=>{this.setState({openForDoubleSwitch: !this.state.openForDoubleSwitch})}}/><br/>
-            <Button onClick={this.handleClick.bind(this)}>Create Post</Button>
-            {this.state.posts.length>0? <Cards color={this.props.randColor} posts={this.state.posts} majorFilter="" senderID={this.state.id}/>:"No suggestions"}
+            <Button onClick={this.handleClick.bind(this)}>Create Post</Button><br/>
+            <div style={{textAlign:"center"}}>
+            {this.state.posts.map((a,i)=>{
+                return <div key={i}>
+                    <Cards backColor={this.props.backColor} color={this.props.randColor} posts={[a]} majorFilter={""} dashFilter={""} senderID={this.state.id} showButtons={false}/>
+                    <br/>
+                </div>
+            })}
+            </div>
+            
         </div>
     }
 

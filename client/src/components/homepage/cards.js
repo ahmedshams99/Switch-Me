@@ -118,37 +118,24 @@ class Card extends React.Component {
 					return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 				}
 				let mouseRange = mouseCurrPosX;
-				if (mouseRange < width / 2) {
+				if (mouseRange < width / 2)
 					mouseRange = width - mouseRange;
-				}
-				let damping = map_range(
-					mouseRange,
-					width / 2,
-					width - width * 10 / 100,
-					0.6,
-					0.8
-				);
+				let damping = map_range(mouseRange, width / 2, width - width * 10 / 100, 0.6, 0.8);
 
-				this.setState({
-					Posx,
-					Posy,
-					damping,
-					mouseCurrPosX,
-					mouseCurrPosY
-				});
+				this.setState({Posx, Posy, damping, mouseCurrPosX, mouseCurrPosY });
 
 				if (mouseCurrPosX > width - width * 20 / 100) {
 					let restX, restY;
-					if (mouseCurrPosX > width / 2) {
+					if (mouseCurrPosX > width / 2)
 						restX = this.state.Posx * 5;
-					} else {
+					else
 						restX = -this.state.Posx * 5;
-					}
-					if (mouseCurrPosY > height / 2) {
+					
+					if (mouseCurrPosY > height / 2)
 						restY = this.state.Posy * 5;
-					} else {
+					else
 						restY = this.state.Posy * 5;
-					}
+					
 					let limit = true;
 					let move = false;
 					let damping = 0.06;
@@ -413,14 +400,16 @@ class cards extends React.Component {
 			});
 		})
 	}
+	
 	render() {
 		return <div className="app" style={{backgroundColor:this.props.backColor}}>
-				<div style ={{float:"left", width:"25vw", marginTop:"100px"}}>
-						<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
-				</div>
-				<div style ={{ float:"right",width:"25vw",marginTop:"100px"}}>
-								{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
-				</div>
+		{this.props.showButtons? <div style ={{float:"left", width:"25vw", marginTop:"100px"}}>
+				<Fab onClick={this.props.showFilterModal}><FilterListIcon/></Fab>
+		</div>:null}
+		{this.props.showButtons? <div style ={{ float:"right",width:"25vw",marginTop:"100px"}}>
+						{this.state.id===""? null:<Fab onClick={this.props.showPostModal}><AddIcon /></Fab>}
+		</div>:null}
+		
 		{this.state.user.length>0?
 		(
 				this.state.user.map((item, i) => 

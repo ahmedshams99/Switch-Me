@@ -7,11 +7,8 @@ import Cards from './cards';
 import LoginModal from './loginModal'
 import RegisterModal from './registerModal'
 import CreatePostModal from './createPostModal'
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import './homepage.scss';
 import FormData from 'form-data'
-import FilterListIcon from '@material-ui/icons/FilterList';
 import SnackBar from "../snackbar";
 import Profile from '../profile/profile'
 import FilterModal from './filterModal'
@@ -41,11 +38,6 @@ const createPostModalStyle = {
 	  bottom                : '15%'
 	}
 };
-const buttonDiv = {
-	content :{
-		display :"inline"
-	}
-}
 export default class HomePage extends Component {
 	
 	constructor(props) {
@@ -82,7 +74,7 @@ export default class HomePage extends Component {
 			bold: null,
 			showRegisterModal:false,
 			showLoginModal:false,
-			id:"5deb854ebc1d3234c8ffc38c",
+			id:"5deb854fbc1d3234c8ffc38d",
 			tutorialNumber: '',
 			dash: '',
 			major: '',
@@ -104,8 +96,6 @@ export default class HomePage extends Component {
 	}
 	async componentDidMount(){
 		this.RandomBackground();
-		if(localStorage.getItem("loggedIn"))
-			this.setState({ lang: localStorage.getItem("lang") });
 		let posts=await axios.get(`/api/users/getAllPosts`);
 		let me=await axios.get(`/api/users/${this.state.id}`)
 		this.setState({
@@ -184,10 +174,7 @@ export default class HomePage extends Component {
 			localStorage.setItem('token',token)
 		}
 	}
-	async toggleCreatePostModal () {
-		
-		this.setState({ showCreatePostModal: !this.state.showCreatePostModal });
-	}
+	
 	fileSelectedHandler = event =>{
 		this.setState({
 			selectedFile : event.target.files[0]
@@ -222,7 +209,6 @@ export default class HomePage extends Component {
 					germanLevel:me.state.germanLevel,
 					englishLevel:me.state.englishLevel
 				}
-				console.log(body)
 				try{
 					let response = axios.post(`/api/users/schedule`,body).then((res)=>{
 						console.log(res);
@@ -251,7 +237,6 @@ export default class HomePage extends Component {
 					});
 				}
 			}).catch(async function(err){
-				// console.log(err);
 				
 			});
 		}
@@ -266,6 +251,12 @@ export default class HomePage extends Component {
 	}
 	async filterDashState(e){
 		await this.setState({dashFilter:e.target.value})
+	}
+	async showFilterModal(){
+		this.setState({showFilterModal:true})
+	}
+	async toggleCreatePostModal () {
+		this.setState({ showCreatePostModal: !this.state.showCreatePostModal });
 	}
 	render() {
 		let alertSnack;
@@ -343,7 +334,7 @@ export default class HomePage extends Component {
 			<div id="Cards">
 
 					
-				{this.state.posts==null? "Loading...":<Cards backColor={this.state.backColors[this.state.randColor]} color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} dashFilter={this.state.dashFilter} senderID={this.state.id}/>}
+				{this.state.posts==null? "Loading...":<Cards backColor={this.state.backColors[this.state.randColor]} color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} dashFilter={this.state.dashFilter} senderID={this.state.id} showFilterModal={this.showFilterModal.bind(this)} showPostModal={this.toggleCreatePostModal.bind(this)} showButtons={this.state.id!==""}/>}
 			<ReactModal style={filterModalStyle} isOpen={this.state.showFilterModal} onRequestClose={()=>{this.setState({showFilterModal:!this.state.showFilterModal})}}>
 					<FilterModal onFilterMajor={this.filterMajorState.bind(this)} onFilterDash={this.filterDashState.bind(this)}/>
 			</ReactModal>
@@ -358,8 +349,8 @@ export default class HomePage extends Component {
 			
 					
 			
-				<ReactModal style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
-					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>
+				<ReactModal backColor={this.state.backColors[this.state.randColor]} color={this.state.randColor} style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
+					<CreatePostModal id={this.state.id} randColor={this.state.randColor} backColor={this.state.backColors[this.state.randColor]}/>
 				</ReactModal>
 			</div>
 			

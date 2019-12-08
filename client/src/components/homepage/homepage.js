@@ -154,9 +154,12 @@ export default class HomePage extends Component {
     this.setState({ showRegisterModal: !this.state.showRegisterModal });
   }
   toggleRegisterModalInside(loggedInId) {
-    this.setState({ showRegisterModal: !this.state.showRegisterModal });
     if (loggedInId) {
-      this.setState({ id: loggedInId });
+      this.setState({ 
+        showRegisterModal: !this.state.showRegisterModal,
+        id: loggedInId,
+        showProfileModal: true
+       });
       localStorage.setItem("id", loggedInId);
     }
   }
@@ -213,9 +216,7 @@ export default class HomePage extends Component {
             englishLevel: me.state.englishLevel
           };
           try {
-            let response = axios.post(`/api/users/schedule`, body).then(res => {
-              console.log(res);
-            });
+            let response = await axios.post(`/api/users/schedule`, body)
             if (response.data.err) {
               await me.setState({
                 alerted: true,
@@ -229,13 +230,12 @@ export default class HomePage extends Component {
                 alertMsg: "You Have Uploaded a Schedule"
               });
             }
-
-            //window.location.reload();
           } catch (err) {
+            console.log(err)
             await me.setState({
               alerted: true,
               alertType: "error",
-              alertMsg: "Somebody has already uploaded this schedule."
+              alertMsg: "A Problem might have occured please try again later."
             });
           }
         })
@@ -442,14 +442,6 @@ export default class HomePage extends Component {
               onFilterDash={this.filterDashState.bind(this)}
             />
           </ReactModal>
-          {/* <div style = {{paddingBottom:"20px" , backgroundColor:this.state.backColors[this.state.randColor]}}>
-					<div style ={{ display:"inline",width:"25vw" }}>
-						{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
-					</div>
-					<div style ={{display:"inline", width:"25vw", marginLeft:"20px" }}>
-						<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
-					</div>
-			</div> */}
 
           <ReactModal
             backColor={this.state.backColors[this.state.randColor]}

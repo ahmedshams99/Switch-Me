@@ -52,7 +52,6 @@ class Card extends React.Component {
 	async componentDidMount() {
 		this.animate();
 		const user= await axios.get(`/api/users/${this.props.data.user}`);
-		const sender = await axios.get(`/api/users/${this.props.senderID}`)
 		await this.setState({
 			fromTutorial:user.data.tutorialNumber,
 			goToTutorials:this.props.data.goToTutorials,
@@ -61,19 +60,24 @@ class Card extends React.Component {
 			germanLevel:user.data.germanLevel,
 			englishLevel:user.data.englishLevel,
 			email:user.data.email,
-			dash:user.data.dash,
-
-			senderEmail:sender.data.email,
-			senderFullName:sender.data.fullName,
-			senderDash:sender.data.dash,
-			senderID:sender.data.ID,
-			senderMajor:sender.data.major,
-			senderTutorial:sender.data.tutorialNumber,
-			senderMobileNumber:sender.data.mobileNumber,
-			senderFacebookAccount:sender.data.facebookAccount,
-			senderGermanLevel:sender.data.germanLevel,
-			senderEnglishLevel:sender.data.englishLevel
+			dash:user.data.dash
 		});
+		if(this.props.senderID!=="")
+		{
+			const sender = await axios.get(`/api/users/${this.props.senderID}`)
+			await this.setState({
+				senderEmail:sender.data.email,
+				senderFullName:sender.data.fullName,
+				senderDash:sender.data.dash,
+				senderID:sender.data.ID,
+				senderMajor:sender.data.major,
+				senderTutorial:sender.data.tutorialNumber,
+				senderMobileNumber:sender.data.mobileNumber,
+				senderFacebookAccount:sender.data.facebookAccount,
+				senderGermanLevel:sender.data.germanLevel,
+				senderEnglishLevel:sender.data.englishLevel
+			});
+		}
 		axios.get(`/api/users/schedule/${this.state.fromTutorial}/${this.state.dash}/${this.state.major}`).then((res)=>{
 			this.setState({scheduleLink:res.data.link})
 		})
@@ -363,8 +367,10 @@ class Card extends React.Component {
 			<div className="text small">Major: {this.state.dash}-{this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
 			<div className="text">To: {this.state.goToTutorials? this.state.goToTutorials.map((item,i)=>{return i>0? ", "+item:item}):null}</div>
-			<div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div>
-			<Button onClick={()=>{
+			<div className="text inline">German:</div> <div className="text small inline">{this.state.germanLevel}</div><br/>
+			<div className="text inline">English:</div> <div className="text small inline">{this.state.englishLevel}</div>
+			<div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div><br/>
+			{this.props.senderID===""? null:<Button style={{ color:"#ffffff", fontWeight: "900"}} onClick={()=>{
 				const body={
 					email:this.state.email,
 					subject:"Request to switch",
@@ -380,7 +386,7 @@ class Card extends React.Component {
 					senderEnglishLevel:this.state.senderEnglishLevel
 				}
 				axios.post('/api/users/sendMail',body)
-			}}>Send Request</Button>
+			}}>Send Request</Button>}
 			</div>
 		);
 	}

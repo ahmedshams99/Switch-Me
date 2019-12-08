@@ -4,6 +4,9 @@ import axios from 'axios'
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import FilterListIcon from '@material-ui/icons/FilterList';
 
 class Card extends React.Component {
 	constructor(props) {
@@ -411,8 +414,13 @@ class cards extends React.Component {
 		})
 	}
 	render() {
-		return <div className="app">
-
+		return <div className="app" style={{backgroundColor:this.props.backColor}}>
+				<div style ={{float:"left", width:"25vw", marginTop:"100px"}}>
+						<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
+				</div>
+				<div style ={{ float:"right",width:"25vw",marginTop:"100px"}}>
+								{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
+				</div>
 		{this.state.user.length>0?
 		(
 				this.state.user.map((item, i) => 

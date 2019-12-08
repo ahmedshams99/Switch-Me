@@ -41,6 +41,11 @@ const createPostModalStyle = {
 	  bottom                : '15%'
 	}
 };
+const buttonDiv = {
+	content :{
+		display :"inline"
+	}
+}
 export default class HomePage extends Component {
 	
 	constructor(props) {
@@ -67,6 +72,10 @@ export default class HomePage extends Component {
 		        "text": "#14151c",
 		        "bold": "#F0F8FF"
 			}],
+			//switch  red         black     white
+			backColors:[
+				"#ff4056", "#2A2C39","#F0F8FF"
+			],
 			randColor: null,
 		    background: null,
 		    text: null,
@@ -194,50 +203,62 @@ export default class HomePage extends Component {
 		fd.append('file' , this.state.selectedFile);
 		fd.append('upload_preset' , upPreset)
 		let me =this
-		axios({
-			url:apiBaseUrl,
-			method:'POST',
-			headers:{
-				'Content-Type':'application/x-www-form-urlencoded'
-			},
-			data:fd
-		}).then(async function(res){
-			var link = res.data.secure_url;
-			const body={
-				tutorialNumber: me.state.tutorialNumber ,
-				dash: me.state.dash ,
-				major: me.state.major,
-				url:link,
-				germanLevel:me.state.germanLevel,
-				englishLevel:me.state.englishLevel
-			}
-			try{
-				axios.post(`/api/users/schedule`,body).then((res)=>{
-					console.log(res);
-				});
-				await me.setState({
-					alerted: true,
-					alertType: "success",
-					alertMsg: "You Have Uploaded a Schedule"
-				});
-				//window.location.reload();
-			} catch (err) {
-				await me.setState({
-					alerted: true,
-					alertType: "error",
-					alertMsg: err.response.data.error
-				});
+		try{
+			axios({
+				url:apiBaseUrl,
+				method:'POST',
+				headers:{
+					'Content-Type':'application/x-www-form-urlencoded'
+				},
+				data:fd
+			}).then(async function(res){
+				var link = res.data.secure_url;
+				
+				const body={
+					tutorialNumber: me.state.tutorialNumber ,
+					dash: me.state.dash ,
+					major: me.state.major,
+					url:link,
+					germanLevel:me.state.germanLevel,
+					englishLevel:me.state.englishLevel
 				}
-			
-
-		}).catch(async function(err){
-			console.log(err);
-			await me.setState({
-				alerted: true,
-				alertType: "error",
-				alertMsg: err.response.data.error
+				console.log(body)
+				try{
+					let response = axios.post(`/api/users/schedule`,body).then((res)=>{
+						console.log(res);
+					});
+					if(response.data.err){
+						await me.setState({
+							alerted: true,
+							alertType: "error",
+							alertMsg: "Somebody has already uploaded this schedule."
+						});
+					}
+					else{
+						await me.setState({
+							alerted: true,
+							alertType: "success",
+							alertMsg: "You Have Uploaded a Schedule"
+						});
+					}
+					
+					//window.location.reload();
+				} catch (err) {
+					await me.setState({
+						alerted: true,
+						alertType: "error",
+						alertMsg: "Somebody has already uploaded this schedule."
+					});
+				}
+			}).catch(async function(err){
+				// console.log(err);
+				
 			});
-		});
+		}
+		catch(err){
+
+		}
+		
 	}
 	
 	async filterMajorState(e){
@@ -315,18 +336,33 @@ export default class HomePage extends Component {
 						<LoginModal clickMe={this.toggleLoginModalInside.bind(this)}/>
 					</ReactModal>
 					
+					
 			</section>
+			
+			
 			<div id="Cards">
-				{this.state.posts==null? "Loading...":<Cards color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} dashFilter={this.state.dashFilter} senderID={this.state.id}/>}
+
+					
+				{this.state.posts==null? "Loading...":<Cards backColor={this.state.backColors[this.state.randColor]} color={this.state.randColor} posts={this.state.posts} majorFilter={this.state.majorFilter} dashFilter={this.state.dashFilter} senderID={this.state.id}/>}
 			<ReactModal style={filterModalStyle} isOpen={this.state.showFilterModal} onRequestClose={()=>{this.setState({showFilterModal:!this.state.showFilterModal})}}>
 					<FilterModal onFilterMajor={this.filterMajorState.bind(this)} onFilterDash={this.filterDashState.bind(this)}/>
 			</ReactModal>
-				{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
-				<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
+			{/* <div style = {{paddingBottom:"20px" , backgroundColor:this.state.backColors[this.state.randColor]}}>
+					<div style ={{ display:"inline",width:"25vw" }}>
+						{this.state.id===""? null:<Fab onClick={()=>{this.toggleCreatePostModal()}}><AddIcon /></Fab>}
+					</div>
+					<div style ={{display:"inline", width:"25vw", marginLeft:"20px" }}>
+						<Fab onClick={()=>{this.setState({showFilterModal:true})}}><FilterListIcon/></Fab>
+					</div>
+			</div> */}
+			
+					
+			
 				<ReactModal style={createPostModalStyle}isOpen={this.state.showCreatePostModal} onRequestClose={()=>{this.toggleCreatePostModal()}}>
 					<CreatePostModal id={this.state.id} randColor={this.state.randColor}/>
 				</ReactModal>
 			</div>
+			
 			<div
               style={{
                 align: "center",

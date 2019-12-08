@@ -129,15 +129,15 @@ exports.createPost = async function(req, res)
 }
 exports.deletePost = async function(req, res)
 {
-    if (!mongoValidator.isMongoId(req.params.userid))
+    if (!mongoValidator.isMongoId(req.params.id))
         return res.send({ err: "Invalid User Id" });
     if (!mongoValidator.isMongoId(req.params.postid))
         return res.send({ err: "Invalid Post Id" });
     const user = await User.findById(req.params.id);
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     if(!user)  return res.send({err:"User doesn't exist"});
     if(!post)  return res.send({err:"Post doesn't exist"});
-    if(post.user!=user._id) return res.send({err:"This user doesn't own this post."})
+    if(""+post.user!==req.params.id+"") return res.send({err:"This user doesn't own this post."})
     const result= await Post.findByIdAndDelete({_id:req.params.postid})
     if(!result) return res.send({err:"Error deleting this post."})
     return res.send(result);

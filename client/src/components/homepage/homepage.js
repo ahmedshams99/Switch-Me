@@ -14,10 +14,11 @@ import Profile from '../profile/profile'
 import FilterModal from './filterModal'
 const registerModalStyle = {
 	content : {
-	  top                   : '5%',
+	  top                   : '0%',
 	  left                  : '30%',
 	  right                 : '30%',
-	  bottom                : '5%'
+	  bottom                : '0%',
+	  textAlign:"center"
 	}
   };
   
@@ -26,7 +27,8 @@ const loginModalStyle = {
 	  top                   : '35%',
 	  left                  : '40%',
 	  right                 : '40%',
-	  bottom                : '35%'
+	  bottom                : '35%',
+	  textAlign:"center"
 	}
 };
 
@@ -74,7 +76,7 @@ export default class HomePage extends Component {
 			bold: null,
 			showRegisterModal:false,
 			showLoginModal:false,
-			id:"5deb854fbc1d3234c8ffc38d",
+			id:"",
 			tutorialNumber: '',
 			dash: '',
 			major: '',

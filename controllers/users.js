@@ -64,13 +64,12 @@ exports.preCreatePost = async function(req, res)
             result.push(allPosts[i]);
         }
     }
-    
     var response = [];
     for(let i = 0;i<result.length;i++)
     {
         var tempUser = await User.findById(result[i].user);
         if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel))
-            response.push(allPosts[i]);
+            response.push(result[i]);
     }
     return res.send({suggestions:response});
 }

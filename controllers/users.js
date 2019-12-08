@@ -200,10 +200,6 @@ exports.logout = async function(req, res)
         const bearer = bearerHeader.split(" ");
         const bearerToken = bearer[1];
         
-        blackList.push(bearerToken);
-        console.log("BlackList loggedOut: "+ blackList);
-        blackList.filter(a=>isTokenExpired(a));
-        
         return res.send("Successfully Logged Out !");
 
     }else{

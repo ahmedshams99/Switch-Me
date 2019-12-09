@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import FilterListIcon from '@material-ui/icons/FilterList';
-
+import SnackBar from "../snackbar";
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -56,18 +56,18 @@ class Card extends React.Component {
 
 	async componentDidMount() {
 		this.animate();
-		const user= await axios.get(`/api/users/${this.props.data.user}`);
+		console.log(this.props.data)
 		await this.setState({
 			postid:this.props.data._id,
 			creatorID:this.props.data.user,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
-			fromTutorial:user.data.tutorialNumber,
-			major:user.data.major,
-			germanLevel:user.data.germanLevel,
-			englishLevel:user.data.englishLevel,
-			email:user.data.email,
-			dash:user.data.dash
+			fromTutorial:this.props.data.creator.tutorialNumber,
+			major:this.props.data.creator.major,
+			germanLevel:this.props.data.creator.germanLevel,
+			englishLevel:this.props.data.creator.englishLevel,
+			email:this.props.data.creator.email,
+			dash:this.props.data.creator.dash
 		});
 		if(this.props.senderID!=="")
 		{
@@ -328,7 +328,7 @@ class Card extends React.Component {
 		} else {
 			requestAnimationFrame(this.animate);
 		}
-		if (this.state.active) {
+		if (this.state.active && el) {
 			el.style.transform =
 				"translate(" +
 				this.state.Posx +
@@ -368,7 +368,7 @@ class Card extends React.Component {
 			<div className="text inline">German:</div> <div className="text small inline">{this.state.germanLevel}</div><br/>
 			<div className="text inline">English:</div> <div className="text small inline">{this.state.englishLevel}</div>
 			<div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div><br/>
-			{this.props.senderID===""? null:<Button style={{ color:"#ffffff", fontWeight: "900"}} onClick={()=>{
+			{this.props.senderID===""? null:<Button style={{ color:"#ffffff", fontWeight: "900"}} onClick={async ()=>{
 				const body={
 					email:this.state.email,
 					subject:"Request to switch",
@@ -383,7 +383,8 @@ class Card extends React.Component {
 					senderGermanLevel:this.state.senderGermanLevel,
 					senderEnglishLevel:this.state.senderEnglishLevel
 				}
-				axios.post('/api/users/sendMail',body)
+				const response=await axios.post('/api/users/sendMail',body)
+				this.props.alertSnack(response);
 			}}>Send Request</Button>}
 			</div>
 		);
@@ -395,21 +396,39 @@ class cards extends React.Component {
 		super(props);
 		this.state = {
 			user:[],
-			loaded:false
+			loaded:false,
+			alerted:false,
+			alertMsg:"",
+			alertType:""
 		}
 	}
 	async componentDidMount() {
-		let arr=this.state.user
-		if(this.props.posts.length>0)
-			this.props.posts.map(async (item) => {
-			axios.get(`/api/users/${item.user}`).then((res)=>{
-				arr.push(res.data)
-				this.setState({user:arr})
-			});
-		})
+		
 	}
-	
+	async alertSnack(response){
+		if (response.data.err) {
+			await this.setState({
+			  alerted: true,
+			  alertType: "error",
+			  alertMsg: "Error sending request."
+			});
+		  } else {
+			await this.setState({
+			  alerted: true,
+			  alertType: "success",
+			  alertMsg: "Request has been sent successfully."
+			});
+		  }
+	}
 	render() {
+		let alertSnack;
+    if (this.state.alerted)
+      alertSnack = (
+        <SnackBar
+          message={this.state.alertMsg}
+          variant={this.state.alertType}
+        />
+      );
 		return <div className="app" style={{backgroundColor:this.props.backColor}}>
 		{this.props.showButtons? <div style ={{float:"left", width:"25vw", marginTop:"100px"}}>
 				<Fab onClick={this.props.showFilterModal}><FilterListIcon/></Fab>
@@ -418,15 +437,25 @@ class cards extends React.Component {
 						{this.state.id===""? null:<Fab onClick={this.props.showPostModal}><AddIcon /></Fab>}
 		</div>:null}
 		
-		{this.state.user.length>0?
+		{this.props.posts.length>0?
 		(
-				this.state.user.map((item, i) => 
+			this.props.posts.map((item, i) => 
 			{
-				return ((this.props.majorFilter==="" || this.state.user[i].major===this.props.majorFilter) && (this.props.dashFilter==="" || this.state.user[i].dash===this.props.dashFilter))?
-				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID} />:null;
+				return ((this.props.majorFilter==="" || item.creator.major===this.props.majorFilter) && (this.props.dashFilter==="" || item.creator.dash===this.props.dashFilter))?
+				<Card key={i} no={i} color={this.props.color} data={item} senderID={this.props.senderID} alertSnack={this.alertSnack.bind(this)}/>:null;
 			})
 		):"No posts found"
 		}
+		<div
+          style={{
+            align: "center",
+            display: "flex",
+            marginTop: "-50px",
+            marginBottom: "20px"
+          }}
+        >
+          {alertSnack}
+        </div>
 		</div>
 	}
 }

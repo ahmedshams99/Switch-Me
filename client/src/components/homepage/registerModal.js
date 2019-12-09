@@ -7,7 +7,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import bcrypt from 'bcryptjs'
-import { Redirect } from "react-router-dom";
 class registerModal extends React.Component {
     constructor(props) {
         super(props);
@@ -23,7 +22,6 @@ class registerModal extends React.Component {
 			facebookAccount:"",
 			germanLevel:"",
             englishLevel:"",
-            redirect:false,
             error:""
         }
     }
@@ -52,8 +50,6 @@ class registerModal extends React.Component {
 			this.setState({error:response.data.err? response.data.err:"Invalid data"}); 
 	}
 	render() {
-        if(this.state.redirect)
-			return <Redirect to="/" />
         return <div>
             <h5>Register<br/></h5>{this.state.error}
 						<TextField fullWidth id="outlined-basic" label="Email" variant="outlined" onChange={(e)=>{this.setState({email:e.target.value})}}/>

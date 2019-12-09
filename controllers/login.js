@@ -4,20 +4,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs')
 
 
-exports.blackList = [];
-exports.verifyToken = async function (eq, res, next) {
+exports.blackList = [""];
+exports.verifyToken = async function (req, res, next) {
     const bearerHeader = req.headers["authorization"];
     if (typeof bearerHeader !== "undefined") {
         const bearer = bearerHeader.split(" ");
         const bearerToken = bearer[1];
-        console.log("BlackList: "+blackList);
-        if(!blackList.includes(bearerToken)){
-
-            req.token = bearerToken;
-            next();
-        }else{
-            res.send({ error: "Not Logged In"});
-        }
+        req.token = bearerToken;
+        next();
     } else {
         res.send({ error: "Not Logged In"});
     }

@@ -56,18 +56,18 @@ class Card extends React.Component {
 
 	async componentDidMount() {
 		this.animate();
-		const user= await axios.get(`/api/users/${this.props.data.user}`);
+		console.log(this.props.data)
 		await this.setState({
 			postid:this.props.data._id,
 			creatorID:this.props.data.user,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
-			fromTutorial:user.data.tutorialNumber,
-			major:user.data.major,
-			germanLevel:user.data.germanLevel,
-			englishLevel:user.data.englishLevel,
-			email:user.data.email,
-			dash:user.data.dash
+			fromTutorial:this.props.data.creator.tutorialNumber,
+			major:this.props.data.creator.major,
+			germanLevel:this.props.data.creator.germanLevel,
+			englishLevel:this.props.data.creator.englishLevel,
+			email:this.props.data.creator.email,
+			dash:this.props.data.creator.dash
 		});
 		if(this.props.senderID!=="")
 		{
@@ -403,17 +403,7 @@ class cards extends React.Component {
 		}
 	}
 	async componentDidMount() {
-		let arr=this.state.user
-		if(this.props.posts.length>0)
-			this.props.posts.map(async (item) => 
-			{
-				await console.log(item)
-				const res=await axios.get(`/api/users/${item.user}`)
-				await console.log(res)
-				await arr.push(res.data)
-				await this.setState({user:arr})
-			}
-		)
+		
 	}
 	async alertSnack(response){
 		if (response.data.err) {
@@ -447,12 +437,12 @@ class cards extends React.Component {
 						{this.state.id===""? null:<Fab onClick={this.props.showPostModal}><AddIcon /></Fab>}
 		</div>:null}
 		
-		{this.state.user.length>0?
+		{this.props.posts.length>0?
 		(
-				this.state.user.map((item, i) => 
+			this.props.posts.map((item, i) => 
 			{
-				return ((this.props.majorFilter==="" || this.state.user[i].major===this.props.majorFilter) && (this.props.dashFilter==="" || this.state.user[i].dash===this.props.dashFilter))?
-				<Card key={i} no={i} color={this.props.color} data={this.props.posts[i]} senderID={this.props.senderID} alertSnack={this.alertSnack.bind(this)}/>:null;
+				return ((this.props.majorFilter==="" || item.creator.major===this.props.majorFilter) && (this.props.dashFilter==="" || item.creator.dash===this.props.dashFilter))?
+				<Card key={i} no={i} color={this.props.color} data={item} senderID={this.props.senderID} alertSnack={this.alertSnack.bind(this)}/>:null;
 			})
 		):"No posts found"
 		}

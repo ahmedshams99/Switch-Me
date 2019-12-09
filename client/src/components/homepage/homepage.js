@@ -100,9 +100,15 @@ export default class HomePage extends Component {
       this.setState({ id: localStorage.getItem("id") });
     }
     let posts = await axios.get(`/api/users/getAllPosts`);
+    let allPosts=posts.data
+    for(let i=0;i<allPosts.length;i++)
+    {
+      let creator = await axios.get(`/api/users/${allPosts[i].user}`);
+      allPosts[i].creator=creator.data
+    }
     let me = await axios.get(`/api/users/${this.state.id}`);
     this.setState({
-      posts: posts.data,
+      posts: allPosts,
       tutorialNumber: me.data.tutorialNumber,
       dash: me.data.dash,
       major: me.data.major,
@@ -231,7 +237,6 @@ export default class HomePage extends Component {
               });
             }
           } catch (err) {
-            console.log(err)
             await me.setState({
               alerted: true,
               alertType: "error",

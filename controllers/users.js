@@ -4,6 +4,10 @@ const postController = require("./posts");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const server ="http://localhost:5000";
+const blackListArray = require('./login');
+const jwt = require('jsonwebtoken');
+
+
 exports.getUser = async function(req, res) {
     if (!mongoValidator.isMongoId(req.params.id))
         return res.send({ err: "Invalid User Id" });
@@ -53,18 +57,21 @@ exports.preCreatePost = async function(req, res)
     //check if someone made a post that works with me
     const myUser = await User.findById(req.params.id);
     var allPosts = await Post.find();
-    allPosts = allPosts.filter(post => post.goToTutorials.includes(myUser.tutorialNumber));
-   
-    if(allPosts.length === 0)
-        return res.send({suggestions:[]});
     var result = [];
-    for(let i = 0;i<allPosts.length;i++)
-    {
-        var tempUser = await User.findById(allPosts[i].user);
-        if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel)&& (req.body.goToTutorials.includes(tempUser.tutorialNumber)) )
+
+    for(var i=0;i<allPosts.length;i++){
+        if(allPosts[i].goToTutorials.includes(myUser.tutorialNumber)){
             result.push(allPosts[i]);
+        }
     }
-    return res.send({suggestions:result});
+    var response = [];
+    for(let i = 0;i<result.length;i++)
+    {
+        var tempUser = await User.findById(result[i].user);
+        if((tempUser.dash === myUser.dash)&&(tempUser.germanLevel === myUser.germanLevel) && (tempUser.englishLevel === myUser.englishLevel))
+            response.push(result[i]);
+    }
+    return res.send({suggestions:response});
 }
 
 
@@ -121,15 +128,15 @@ exports.createPost = async function(req, res)
 }
 exports.deletePost = async function(req, res)
 {
-    if (!mongoValidator.isMongoId(req.params.userid))
+    if (!mongoValidator.isMongoId(req.params.id))
         return res.send({ err: "Invalid User Id" });
     if (!mongoValidator.isMongoId(req.params.postid))
         return res.send({ err: "Invalid Post Id" });
     const user = await User.findById(req.params.id);
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.postid);
     if(!user)  return res.send({err:"User doesn't exist"});
     if(!post)  return res.send({err:"Post doesn't exist"});
-    if(post.user!=user._id) return res.send({err:"This user doesn't own this post."})
+    if(""+post.user!==req.params.id+"") return res.send({err:"This user doesn't own this post."})
     const result= await Post.findByIdAndDelete({_id:req.params.postid})
     if(!result) return res.send({err:"Error deleting this post."})
     return res.send(result);
@@ -160,3 +167,44 @@ exports.request = async function(req, res)
         console.log(json);
     }).catch(err => console.log("Error", err));
 }  
+
+
+
+isTokenExpired = async () => {
+    try {
+        const LoginTokenValue = await AsyncStorage.getItem('LoginTokenValue');
+        if (JSON.parse(LoginTokenValue).RememberMe) {
+            const { exp } = JwtDecode(LoginTokenValue);
+            if (exp < (new Date().getTime() + 1) / 1000) {
+                this.handleSetTimeout();
+                return false;
+            } else {
+                //Navigate inside the application
+                return true;
+            }
+        } else {
+            //Navigate to the login page
+        }
+    } catch (err) {
+        console.log('Spalsh -> isTokenExpired -> err', err);
+        //Navigate to the login page
+        return false;
+    }
+}
+
+exports.logout = async function(req, res)
+{
+    var blackList = blackListArray.blackList;
+    const bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== "undefined") {
+        const bearer = bearerHeader.split(" ");
+        const bearerToken = bearer[1];
+        
+        return res.send("Successfully Logged Out !");
+
+    }else{
+        return res.send({ error: "Not Logged In"});
+    }
+
+
+}

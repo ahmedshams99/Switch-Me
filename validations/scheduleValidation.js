@@ -28,6 +28,21 @@ module.exports = {
             "Product Design",
             "Faculty of Law and Legal Studies"
             ]).required(),
+            germanLevel: Joi.string().valid([
+                "German Language I",
+                "German Language II",
+                "German Language III",
+                "German Language IV",
+                "None"
+              ]).required(),
+              englishLevel: Joi.string().valid([
+                "Academic English",
+                "Academic Study Skills",
+                "Critical Thinking & Scientific Methodology",
+                "Communication & Presentation Skills",
+                "Research Paper Writing",
+                "None"
+              ]).required(),
         };
         return Joi.validate(request, validationSchema);
     }

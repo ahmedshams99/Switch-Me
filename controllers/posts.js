@@ -17,7 +17,7 @@ exports.createPost = async function(req, res) {
       if (isValidatedPost.error)
       return res.send({ error: isValidatedPost.error});
       const newPost = await Post.create(req.body);
-      if(!newPost) return res.send({err: "Error creating post"})
+      if(!newPost) return res.send({error: "Error creating post"})
       return res.send({ msg: "Post was created successfully", newPost });
 };
 exports.updatePost = async function(req, res) {

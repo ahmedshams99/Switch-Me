@@ -1,11 +1,11 @@
 const User = require("../models/User");
 const userController = require("../controllers/users");
 const jwt = require("jsonwebtoken");
-const encryption = require('../routes/api/utils/encryption');
 const bcrypt = require('bcryptjs')
 
 
-exports.verifyToken = async function (eq, res, next) {
+exports.blackList = [""];
+exports.verifyToken = async function (req, res, next) {
     const bearerHeader = req.headers["authorization"];
     if (typeof bearerHeader !== "undefined") {
         const bearer = bearerHeader.split(" ");

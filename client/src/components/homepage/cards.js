@@ -1,8 +1,13 @@
 import React from "react";
 import "./cards.scss"
 import axios from 'axios'
-import FilterListIcon from '@material-ui/icons/FilterList';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import SnackBar from "../snackbar";
 class Card extends React.Component {
 	constructor(props) {
 		super(props);
@@ -30,7 +35,14 @@ class Card extends React.Component {
 			fromTutorial:null,
 			goToTutorials:null,
 			openForDoubleSwitch:null,
-			major:""
+			major:"",
+			germanLevel:null,
+			englishLevel:null,
+			email:"",
+			dash:"",
+			majorFilter:this.props.majorFilter,
+			postid:"",
+			creatorID:""
 		};
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -44,13 +56,38 @@ class Card extends React.Component {
 
 	async componentDidMount() {
 		this.animate();
-		const user= await axios.get(`/api/users/${this.props.data.user}`);
+		console.log(this.props.data)
 		await this.setState({
-			fromTutorial:user.data.tutorialNumber,
+			postid:this.props.data._id,
+			creatorID:this.props.data.user,
 			goToTutorials:this.props.data.goToTutorials,
 			openForDoubleSwitch:this.props.data.openForDoubleSwitch,
-			major:user.data.major  
+			fromTutorial:this.props.data.creator.tutorialNumber,
+			major:this.props.data.creator.major,
+			germanLevel:this.props.data.creator.germanLevel,
+			englishLevel:this.props.data.creator.englishLevel,
+			email:this.props.data.creator.email,
+			dash:this.props.data.creator.dash
 		});
+		if(this.props.senderID!=="")
+		{
+			const sender = await axios.get(`/api/users/${this.props.senderID}`)
+			await this.setState({
+				senderEmail:sender.data.email,
+				senderFullName:sender.data.fullName,
+				senderDash:sender.data.dash,
+				senderID:sender.data.ID,
+				senderMajor:sender.data.major,
+				senderTutorial:sender.data.tutorialNumber,
+				senderMobileNumber:sender.data.mobileNumber,
+				senderFacebookAccount:sender.data.facebookAccount,
+				senderGermanLevel:sender.data.germanLevel,
+				senderEnglishLevel:sender.data.englishLevel
+			});
+		}
+		axios.get(`/api/users/schedule/${this.state.fromTutorial}/${this.state.dash}/${this.state.major}`).then((res)=>{
+			this.setState({scheduleLink:res.data.link})
+		})
 	}
 
 	handleDown(e) {
@@ -85,37 +122,24 @@ class Card extends React.Component {
 					return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 				}
 				let mouseRange = mouseCurrPosX;
-				if (mouseRange < width / 2) {
+				if (mouseRange < width / 2)
 					mouseRange = width - mouseRange;
-				}
-				let damping = map_range(
-					mouseRange,
-					width / 2,
-					width - width * 10 / 100,
-					0.6,
-					0.8
-				);
+				let damping = map_range(mouseRange, width / 2, width - width * 10 / 100, 0.6, 0.8);
 
-				this.setState({
-					Posx,
-					Posy,
-					damping,
-					mouseCurrPosX,
-					mouseCurrPosY
-				});
+				this.setState({Posx, Posy, damping, mouseCurrPosX, mouseCurrPosY });
 
 				if (mouseCurrPosX > width - width * 20 / 100) {
 					let restX, restY;
-					if (mouseCurrPosX > width / 2) {
+					if (mouseCurrPosX > width / 2)
 						restX = this.state.Posx * 5;
-					} else {
+					else
 						restX = -this.state.Posx * 5;
-					}
-					if (mouseCurrPosY > height / 2) {
+					
+					if (mouseCurrPosY > height / 2)
 						restY = this.state.Posy * 5;
-					} else {
+					else
 						restY = this.state.Posy * 5;
-					}
+					
 					let limit = true;
 					let move = false;
 					let damping = 0.06;
@@ -304,7 +328,7 @@ class Card extends React.Component {
 		} else {
 			requestAnimationFrame(this.animate);
 		}
-		if (this.state.active) {
+		if (this.state.active && el) {
 			el.style.transform =
 				"translate(" +
 				this.state.Posx +
@@ -331,22 +355,107 @@ class Card extends React.Component {
 				onTouchMove={this.handleTouchMove}
 				onTouchEnd={this.handleTouchEnd}
 			>
-			<div className="text small">Major: {this.state.major}</div>
+			{this.props.senderID===this.state.creatorID? <Button style={{right:"-13vw"}} onClick={async ()=>{
+				const response=await axios.delete(`/api/users/${this.props.senderID}/${this.state.postid}`)
+				if(!response.data.err)
+					window.location.reload();
+			}}><CloseIcon/></Button>:null}{this.props.senderID===this.state.creatorID? <br/>:null}
+			{this.state.scheduleLink? <img alt={"schedule"} style={{width:"22vw",height:"12vw"}}src={this.state.scheduleLink}/>:
+			<img alt={"schedule"} style={{width:"12vw",height:"12vw"}}src="https://cdn3.iconfinder.com/data/icons/calendar-28/200/181-512.png"/>}
+			<div className="text small">Major: {this.state.dash}-{this.state.major}</div>
             <div className="text">From: {this.state.fromTutorial}</div>
-            <div className="text">To: {this.state.goToTutorials}</div>
-            <div className="text">Double Switch: {this.state.openForDoubleSwitch? "True":"False"}</div>
+			<div className="text">To: {this.state.goToTutorials? this.state.goToTutorials.map((item,i)=>{return i>0? ", "+item:item}):null}</div>
+			<div className="text inline">German:</div> <div className="text small inline">{this.state.germanLevel}</div><br/>
+			<div className="text inline">English:</div> <div className="text small inline">{this.state.englishLevel}</div>
+			<div className="text">Double Switch: {this.state.openForDoubleSwitch? <CheckIcon/>:<CloseIcon/>}</div><br/>
+			{this.props.senderID===""? null:<Button style={{ color:"#ffffff", fontWeight: "900"}} onClick={async ()=>{
+				const body={
+					email:this.state.email,
+					subject:"Request to switch",
+					senderEmail:this.state.senderEmail,
+					senderFullName:this.state.senderFullName,
+					senderDash:this.state.senderDash,
+					senderID:this.state.senderID,
+					senderMajor:this.state.senderMajor,
+					senderTutorial:this.state.senderTutorial,
+					senderMobileNumber:this.state.senderMobileNumber,
+					senderFacebookAccount:this.state.senderFacebookAccount,
+					senderGermanLevel:this.state.senderGermanLevel,
+					senderEnglishLevel:this.state.senderEnglishLevel
+				}
+				const response=await axios.post('/api/users/sendMail',body)
+				this.props.alertSnack(response);
+			}}>Send Request</Button>}
 			</div>
 		);
 	}
 }
 
 class cards extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			user:[],
+			loaded:false,
+			alerted:false,
+			alertMsg:"",
+			alertType:""
+		}
+	}
+	async componentDidMount() {
+		
+	}
+	async alertSnack(response){
+		if (response.data.err) {
+			await this.setState({
+			  alerted: true,
+			  alertType: "error",
+			  alertMsg: "Error sending request."
+			});
+		  } else {
+			await this.setState({
+			  alerted: true,
+			  alertType: "success",
+			  alertMsg: "Request has been sent successfully."
+			});
+		  }
+	}
 	render() {
-		return <div className="app">
-			<Fab><FilterListIcon/></Fab>
-		{this.props.posts.map((item, i) => {
-			return <Card key={i} no={i} color={this.props.color} data={item}/>;
-		})}
+		let alertSnack;
+    if (this.state.alerted)
+      alertSnack = (
+        <SnackBar
+          message={this.state.alertMsg}
+          variant={this.state.alertType}
+        />
+      );
+		return <div className="app" style={{backgroundColor:this.props.backColor}}>
+		{this.props.showButtons? <div style ={{float:"left", width:"25vw", marginTop:"100px"}}>
+				<Fab onClick={this.props.showFilterModal}><FilterListIcon/></Fab>
+		</div>:null}
+		{this.props.showButtons? <div style ={{ float:"right",width:"25vw",marginTop:"100px"}}>
+						{this.state.id===""? null:<Fab onClick={this.props.showPostModal}><AddIcon /></Fab>}
+		</div>:null}
+		
+		{this.props.posts.length>0?
+		(
+			this.props.posts.map((item, i) => 
+			{
+				return ((this.props.majorFilter==="" || item.creator.major===this.props.majorFilter) && (this.props.dashFilter==="" || item.creator.dash===this.props.dashFilter))?
+				<Card key={i} no={i} color={this.props.color} data={item} senderID={this.props.senderID} alertSnack={this.alertSnack.bind(this)}/>:null;
+			})
+		):"No posts found"
+		}
+		<div
+          style={{
+            align: "center",
+            display: "flex",
+            marginTop: "-50px",
+            marginBottom: "20px"
+          }}
+        >
+          {alertSnack}
+        </div>
 		</div>
 	}
 }

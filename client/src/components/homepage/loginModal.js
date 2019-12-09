@@ -19,7 +19,8 @@ class loginModal extends React.Component {
         const response=await axios.put('/login',body);
         console.log(response);
         if(!response.data.error){
-            this.props.clickMe(response.data._id,response.data.token);
+            console.log(response.data)
+            this.props.clickMe(response.data.id,response.data.token);
 
         }
         else

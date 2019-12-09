@@ -1,6 +1,7 @@
 const server ="http://localhost:5000";
 const fetch = require("node-fetch");
 const User = require("../models/User");
+const bcrypt = require('bcryptjs');
 
 exports.addPeople = async function (req,res){
     
@@ -9,9 +10,9 @@ exports.addPeople = async function (req,res){
         major: "Computer Science and Engineering",
         germanLevel:"None",
         englishLevel:"None",
-        email: "habd@gmail.com",
+        email: "ahmedalaamanutd@gmail.com",
         fullName:"ahmed alaa", 
-        password:"habeedkbeer",
+        password:bcrypt.hashSync("habeedkbeer", 10),
         dash: 69,
         ID: 1,
         tutorialNumber:1
@@ -37,7 +38,7 @@ exports.addPeople = async function (req,res){
         englishLevel:"None",
         email: "habd1@gmail.com",
         fullName:"mohamed omar mantawy", 
-        password:"habeedkbeer",
+        password:bcrypt.hashSync("habeedkbeer", 10),
         dash: 69,
         ID: 2,
         tutorialNumber:2
@@ -67,7 +68,7 @@ exports.addPeople = async function (req,res){
         englishLevel:"None",
         email: "habd2@gmail.com",
         fullName:"ahmed shams sun", 
-        password:"habeedkbeer",
+        password:bcrypt.hashSync("habeedkbeer", 10),
         dash: 69,
         ID: 3,
         tutorialNumber:3
@@ -98,7 +99,7 @@ body = {
     englishLevel:"None",
     email: "habd3@gmail.com",
     fullName:"nada ", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 4,
     tutorialNumber:4
@@ -125,7 +126,7 @@ body = {
     englishLevel:"None",
     email: "habd4@gmail.com",
     fullName:"mohd", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 5,
     tutorialNumber:4
@@ -153,7 +154,7 @@ body = {
     englishLevel:"None",
     email: "habd5@gmail.com",
     fullName:"abdelrahman saad", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 6,
     tutorialNumber:5
@@ -181,7 +182,7 @@ body = {
     englishLevel:"None",
     email: "habd6@gmail.com",
     fullName:"maisara", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 7,
     tutorialNumber:6
@@ -208,7 +209,7 @@ body = {
     englishLevel:"None",
     email: "habd7@gmail.com",
     fullName:"khaled ahmed zozza", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 8,
     tutorialNumber:8
@@ -237,7 +238,7 @@ body = {
     englishLevel:"None",
     email: "habd8@gmail.com",
     fullName:"TRG MORO", 
-    password:"habeedkbeer",
+    password:bcrypt.hashSync("habeedkbeer", 10),
     dash: 69,
     ID: 9,
     tutorialNumber:3
